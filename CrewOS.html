@@ -1,0 +1,1492 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CrewOS — 智能体协作操作系统</title>
+<style>
+:root{
+  --bg:#060609;--s1:#0c0c14;--s2:#12121e;--s3:#191930;
+  --t1:#f2f2f7;--t2:#b0b0c4;--t3:#6a6a82;
+  --br:#1a1a2c;--br2:#26263e;
+  --g:#e0a838;--gl:rgba(224,168,56,.12);
+  --b:#4d82e0;--bl:rgba(77,130,224,.1);
+  --gr:#4dc89a;--grl:rgba(77,200,154,.1);
+  --p:#a06be8;--pl:rgba(160,107,232,.1);
+  --o:#e06b5a;--ol:rgba(224,107,90,.1);
+  --c:#5ec4d6;--cl:rgba(94,196,214,.1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--t1);font-family:"Inter","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-size:16px;line-height:1.68;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(ellipse 100% 60% at 50% 0%,rgba(77,130,224,.06),transparent),radial-gradient(ellipse 60% 40% at 85% 30%,rgba(224,168,56,.04),transparent),radial-gradient(ellipse 60% 40% at 15% 70%,rgba(160,107,232,.04),transparent)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 20%,transparent 90%)}
+h1,h2,h3,h4,p,li{margin:0}
+ul{padding:0;list-style:none}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+/* ── shared ── */
+.sec{padding:clamp(56px,7vw,104px) clamp(24px,7vw,96px);border-bottom:1px solid var(--br);position:relative}
+.sec-tag{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.sec-tag::before{content:"";width:24px;height:1px;background:var(--t3)}
+.sec-tag.center{justify-content:center}
+h1{font-size:clamp(36px,5.5vw,68px);line-height:1.12;font-weight:700;letter-spacing:-.025em;max-width:820px;text-wrap:balance}
+h1 em{font-style:normal;background:linear-gradient(95deg,var(--g),var(--o));-webkit-background-clip:text;color:transparent}
+h2{font-size:clamp(28px,4vw,48px);line-height:1.16;font-weight:700;letter-spacing:-.02em;max-width:740px;text-wrap:balance}
+h2 em.b{font-style:normal;background:linear-gradient(95deg,var(--b),var(--p));-webkit-background-clip:text;color:transparent}
+h2 em.g{font-style:normal;background:linear-gradient(95deg,var(--gr),var(--c));-webkit-background-clip:text;color:transparent}
+h2 em.go{font-style:normal;background:linear-gradient(95deg,var(--g),var(--o));-webkit-background-clip:text;color:transparent}
+h3{font-size:clamp(18px,2vw,24px);font-weight:650;letter-spacing:-.01em;line-height:1.25}
+h4{font-size:15px;font-weight:650;letter-spacing:-.005em}
+.lead{font-size:clamp(16px,1.6vw,19px);line-height:1.68;color:var(--t2);max-width:620px;margin-top:18px}
+.lead strong{color:var(--t1);font-weight:600}
+.para{font-size:15px;line-height:1.72;color:var(--t2);max-width:640px}
+.para+.para{margin-top:12px}
+.para strong{color:var(--t1);font-weight:600}
+.para em{font-style:normal;color:var(--g);font-weight:600}
+
+/* ═══ COVER ═══ */
+.cover{min-height:100svh;display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,80px);align-items:center;padding:clamp(56px,7vw,104px) clamp(24px,7vw,96px)}
+.cover-left{max-width:560px}
+.brand{display:inline-flex;align-items:center;gap:10px;margin-bottom:24px;font-size:20px;font-weight:800;letter-spacing:-.02em}
+.brand .b-dot{width:30px;height:30px;border-radius:9px;background:conic-gradient(from 180deg,var(--b),var(--g),var(--p),var(--gr),var(--b));box-shadow:0 0 28px rgba(77,130,224,.3)}
+.cover h1{font-size:clamp(36px,5vw,60px);line-height:1.12;text-wrap:balance}
+.cover .sub{margin-top:20px;font-size:clamp(16px,1.6vw,19px);color:var(--t2);line-height:1.68;text-wrap:balance}
+.cover-meta{margin-top:28px;display:flex;gap:8px;flex-wrap:wrap}
+.cover-meta span{padding:0 12px;height:32px;border-radius:7px;border:1px solid var(--br2);background:var(--s1);font-size:12px;font-weight:600;color:var(--t2);display:inline-flex;align-items:center;gap:5px}
+.cover-meta span::before{content:"";width:4px;height:4px;border-radius:50%}
+.cover-meta span:nth-child(1)::before{background:var(--b)}.cover-meta span:nth-child(2)::before{background:var(--g)}
+.cover-meta span:nth-child(3)::before{background:var(--p)}.cover-meta span:nth-child(4)::before{background:var(--gr)}
+
+/* live agent activity panel */
+.activity-panel{
+  background:var(--s1);border:1px solid var(--br);border-radius:14px;overflow:hidden;
+  box-shadow:0 0 0 1px rgba(255,255,255,.03),0 24px 64px rgba(0,0,0,.4);
+}
+.ap-bar{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--br)}
+.ap-bar .l{display:flex;align-items:center;gap:8px}
+.ap-bar .dots{display:flex;gap:6px}.ap-bar .dots i{width:9px;height:9px;border-radius:50%}
+.ap-bar .dots i:nth-child(1){background:#ff5f57}.ap-bar .dots i:nth-child(2){background:#f0a32c}.ap-bar .dots i:nth-child(3){background:#3ec04e}
+.ap-bar .t{font-size:11px;color:var(--t3)}
+.ap-bar .live{font-size:10px;color:#3ec04e;font-weight:600;display:flex;align-items:center;gap:5px}
+.ap-bar .live::before{content:"";width:6px;height:6px;border-radius:50%;background:#3ec04e;animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 6px #3ec04e}50%{opacity:.4;box-shadow:none}}
+.ap-body{padding:16px;display:grid;gap:10px}
+
+.ap-row{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 12px;background:var(--s2);border:1px solid var(--br2);border-radius:9px;transition:all .3s}
+.ap-row:hover{border-color:var(--br2);background:var(--s3)}
+.ap-ico{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:15px;flex-shrink:0}
+.ap-ico.b{background:var(--bl);border:1px solid rgba(77,130,224,.2)}
+.ap-ico.g{background:var(--gl);border:1px solid rgba(224,168,56,.2)}
+.ap-ico.gr{background:var(--grl);border:1px solid rgba(77,200,154,.2)}
+.ap-ico.p{background:var(--pl);border:1px solid rgba(160,107,232,.2)}
+.ap-ico.c{background:var(--cl);border:1px solid rgba(94,196,214,.2)}
+.ap-ico.o{background:var(--ol);border:1px solid rgba(224,107,90,.2)}
+.ap-mid b{font-size:13px;font-weight:600;display:block;line-height:1.3}
+.ap-mid span{font-size:11px;color:var(--t3);display:block;margin-top:1px}
+.ap-status{font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;white-space:nowrap}
+.ap-status.run{background:rgba(77,200,154,.1);color:#7de0ba}
+.ap-status.wait{background:rgba(224,168,56,.1);color:#e8c87a}
+.ap-status.done{background:rgba(77,130,224,.1);color:#8eb4f5}
+
+.ap-flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:10px 12px;background:var(--bg);border:1px dashed var(--br2);border-radius:9px}
+.ap-flow .fb{padding:5px 10px;border-radius:5px;font-size:10px;font-weight:600;background:var(--s2);border:1px solid var(--br2);color:var(--t2)}
+.ap-flow .fa{color:var(--t3);font-size:12px}
+
+.ap-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.ap-stat{padding:10px 12px;background:var(--s2);border:1px solid var(--br2);border-radius:8px}
+.ap-stat strong{font-size:22px;font-weight:700;color:var(--g);display:block;line-height:1}
+.ap-stat span{font-size:10px;color:var(--t3);display:block;margin-top:4px}
+
+/* ═══ PROBLEM ═══ */
+.problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,80px);align-items:start;margin-top:32px}
+.pain-list{display:grid;gap:10px}
+.pain-item{padding:20px 22px;border-radius:12px;border:1px solid var(--br);background:var(--s1);border-left:3px solid var(--o)}
+.pain-item b{font-size:16px;font-weight:600;display:block;margin-bottom:6px}
+.pain-item p{font-size:14px;color:var(--t3);line-height:1.6}
+.pain-item .tag-pain{font-size:10px;color:var(--o);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;display:block}
+
+/* ═══ SOLUTION ═══ */
+.sol-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,80px);align-items:start;margin-top:32px}
+.sol-points{display:grid;gap:14px}
+.sol-point{padding:22px;border-radius:12px;background:var(--s1);border:1px solid var(--br);position:relative;overflow:hidden;cursor:pointer;transition:all .3s}
+.sol-point:hover{border-color:var(--br2);transform:translateY(-2px)}
+.sol-point::before{content:"";position:absolute;top:0;left:0;right:0;height:2px}
+.sol-point:nth-child(1)::before{background:var(--b)}.sol-point:nth-child(2)::before{background:var(--g)}.sol-point:nth-child(3)::before{background:var(--p)}.sol-point:nth-child(4)::before{background:var(--gr)}
+.sol-point h3{margin-bottom:8px}
+.sol-point .sp-num{font-size:11px;color:var(--t3);font-weight:700;letter-spacing:.08em;margin-bottom:10px;display:block}
+.sol-point p{font-size:14px;color:var(--t2);line-height:1.6}
+.sol-point .expand{font-size:13px;color:var(--t3);max-height:0;overflow:hidden;transition:max-height .4s,margin-top .3s;line-height:1.6}
+.sol-point.open .expand{max-height:200px;margin-top:10px}
+
+/* ═══ ARCHITECTURE ═══ */
+.arch-diagram{margin-top:32px;border-radius:14px;border:1px solid var(--br);background:var(--s1);overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.ad-bar{height:44px;display:flex;align-items:center;gap:8px;padding:0 16px;border-bottom:1px solid var(--br)}
+.ad-bar .dots{display:flex;gap:6px}.ad-bar .dots i{width:9px;height:9px;border-radius:50%}
+.ad-bar .dots i:nth-child(1){background:#ff5f57}.ad-bar .dots i:nth-child(2){background:#f0a32c}.ad-bar .dots i:nth-child(3){background:#3ec04e}
+.ad-bar .t{font-size:11px;color:var(--t3);margin-left:8px}
+.ad-body{padding:24px;display:grid;gap:20px}
+.ad-layer{display:grid;gap:10px}
+.ad-layer .al-head{display:flex;align-items:center;gap:10px}
+.al-head .al-num{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;font-size:11px;font-weight:700}
+.ad-layer:nth-child(1) .al-num{background:var(--bl);color:var(--b)}
+.ad-layer:nth-child(2) .al-num{background:var(--bl);color:var(--b)}
+.ad-layer:nth-child(3) .al-num{background:var(--gl);color:var(--g)}
+.ad-layer:nth-child(4) .al-num{background:var(--grl);color:var(--gr)}
+.ad-layer:nth-child(5) .al-num{background:var(--pl);color:var(--p)}
+.al-head h4{font-size:15px}
+.al-head span{font-size:12px;color:var(--t3)}
+.al-head .line{flex:1;height:1px;background:var(--br)}
+.al-blocks{display:flex;flex-wrap:wrap;gap:6px}
+.alb{padding:7px 12px;border-radius:6px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:4px;transition:transform .2s}
+.alb:hover{transform:translateY(-2px)}
+.alb.blue{background:var(--bl);border:1px solid rgba(77,130,224,.2);color:#8eb4f5}
+.alb.gold{background:var(--gl);border:1px solid rgba(224,168,56,.2);color:#e8c87a}
+.alb.green{background:var(--grl);border:1px solid rgba(77,200,154,.2);color:#7de0ba}
+.alb.gray{background:var(--s2);border:1px solid var(--br2);color:var(--t2)}
+.al-pipe{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:12px;background:var(--bg);border:1px dashed var(--br2);border-radius:9px}
+.alp{padding:7px 11px;border-radius:5px;font-size:10px;font-weight:600;background:var(--s2);border:1px solid var(--br2);color:var(--t2)}
+.ala{color:var(--t3);font-size:12px}
+
+/* ═══ AGENT ROLES ═══ */
+.roles-grid{margin-top:32px;display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.role-card{
+  padding:24px 22px;border-radius:14px;background:var(--s1);border:1px solid var(--br);
+  position:relative;overflow:hidden;transition:all .3s;
+}
+.role-card:hover{border-color:var(--br2);transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.2)}
+.role-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px}
+.role-card:nth-child(1)::before{background:var(--b);box-shadow:0 0 10px var(--b)}
+.role-card:nth-child(2)::before{background:var(--gr);box-shadow:0 0 10px var(--gr)}
+.role-card:nth-child(3)::before{background:var(--g);box-shadow:0 0 10px var(--g)}
+.role-card:nth-child(4)::before{background:var(--p);box-shadow:0 0 10px var(--p)}
+.role-card:nth-child(5)::before{background:var(--c);box-shadow:0 0 10px var(--c)}
+.role-card:nth-child(6)::before{background:var(--o);box-shadow:0 0 10px var(--o)}
+.rc-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.rc-ico{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:21px;transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.role-card:hover .rc-ico{transform:scale(1.12) rotate(-5deg)}
+.role-card:nth-child(1) .rc-ico{background:var(--bl)}.role-card:nth-child(2) .rc-ico{background:var(--grl)}
+.role-card:nth-child(3) .rc-ico{background:var(--gl)}.role-card:nth-child(4) .rc-ico{background:var(--pl)}
+.role-card:nth-child(5) .rc-ico{background:var(--cl)}.role-card:nth-child(6) .rc-ico{background:var(--ol)}
+.rc-head h3{font-size:18px;color:var(--t1)}
+.rc-head .rc-count{font-size:10px;color:var(--t2);font-weight:600;margin-top:2px}
+.rc-desc{font-size:13px;color:var(--t2);line-height:1.55;margin-bottom:14px}
+.rc-sub-label{font-size:10px;color:var(--t2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.rc-subs{display:grid;gap:6px}
+.rc-sub{
+  display:flex;align-items:flex-start;gap:10px;padding:10px 12px;
+  background:var(--s2);border:1px solid var(--br2);border-radius:9px;
+  transition:all .2s;
+}
+.rc-sub:hover{border-color:var(--br2);background:var(--s3);transform:translateX(2px)}
+.rc-sub .rs-ico{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:13px;flex-shrink:0;transition:transform .2s}
+.rc-sub:hover .rs-ico{transform:scale(1.1)}
+.role-card:nth-child(1) .rs-ico{background:var(--bl)}.role-card:nth-child(2) .rs-ico{background:var(--grl)}
+.role-card:nth-child(3) .rs-ico{background:var(--gl)}.role-card:nth-child(4) .rs-ico{background:var(--pl)}
+.role-card:nth-child(5) .rs-ico{background:var(--cl)}.role-card:nth-child(6) .rs-ico{background:var(--ol)}
+.rc-sub .rs-mid{flex:1;min-width:0}
+.rc-sub .rs-mid b{font-size:13px;font-weight:600;display:block;line-height:1.3;color:var(--t1)}
+.rc-sub .rs-mid span{font-size:11px;color:var(--t2);display:block;margin-top:1px;line-height:1.4}
+.rc-sub .rs-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px}
+.rc-sub .rs-tags em{font-style:normal;padding:2px 6px;border-radius:4px;background:var(--bg);font-size:9px;color:var(--t2);border:1px solid var(--br2)}
+.rc-flow{margin-top:12px;padding:10px 12px;background:var(--bg);border:1px solid var(--br2);border-radius:9px;font-size:11px;color:var(--t2);line-height:1.5}
+
+/* ═══ COMBOS ═══ */
+.combo-grid{margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.combo-card{padding:24px;border-radius:14px;background:var(--s1);border:1px solid var(--br);position:relative;overflow:hidden;cursor:pointer;transition:all .3s}
+.combo-card:hover{border-color:var(--br2);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.2)}
+.combo-card .glow{position:absolute;inset:0;opacity:0;transition:opacity .4s;pointer-events:none}
+.combo-card:hover .glow{opacity:1}
+.combo-card:nth-child(1) .glow{background:radial-gradient(circle at 30% 0%,rgba(77,130,224,.08),transparent 60%)}
+.combo-card:nth-child(2) .glow{background:radial-gradient(circle at 30% 0%,rgba(224,168,56,.08),transparent 60%)}
+.combo-card:nth-child(3) .glow{background:radial-gradient(circle at 30% 0%,rgba(77,200,154,.08),transparent 60%)}
+.combo-card:nth-child(4) .glow{background:radial-gradient(circle at 30% 0%,rgba(160,107,232,.08),transparent 60%)}
+.combo-card>*{position:relative;z-index:1}
+.cc-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:12px}
+.cc-agents{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.cc-a{padding:5px 11px;border-radius:7px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:4px;transition:transform .2s}
+.combo-card:hover .cc-a{transform:translateY(-2px)}
+.cc-a.b{background:var(--bl);color:#8eb4f5;border:1px solid rgba(77,130,224,.2)}
+.cc-a.g{background:var(--gl);color:#e8c87a;border:1px solid rgba(224,168,56,.2)}
+.cc-a.gr{background:var(--grl);color:#7de0ba;border:1px solid rgba(77,200,154,.2)}
+.cc-a.p{background:var(--pl);color:#c4a0f0;border:1px solid rgba(160,107,232,.2)}
+.cc-a.o{background:var(--ol);color:#e89890;border:1px solid rgba(224,107,90,.2)}
+.cc-a.c{background:var(--cl);color:#8edce8;border:1px solid rgba(94,196,214,.2)}
+.cc-plus{color:var(--t3);font-size:13px}
+.cc-title{font-size:17px;font-weight:650;margin-bottom:6px}
+.cc-result{padding:12px 14px;background:var(--s2);border-radius:8px;border:1px solid var(--br2);font-size:13px;color:var(--t2);line-height:1.55}
+.cc-result b{color:var(--t1);font-weight:600}
+.cc-detail{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.combo-card.open .cc-detail{max-height:320px}
+.cc-detail-inner{margin-top:12px;padding:12px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--br2)}
+.cc-detail-inner .step{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:12px;color:var(--t2);line-height:1.5}
+.cc-detail-inner .step:last-child{margin-bottom:0}
+.cc-detail-inner .step .si{width:18px;height:18px;border-radius:5px;flex-shrink:0;display:grid;place-items:center;font-size:10px;font-weight:700}
+.combo-card:nth-child(1) .si{background:var(--bl);color:var(--b)}
+.combo-card:nth-child(2) .si{background:var(--gl);color:var(--g)}
+.combo-card:nth-child(3) .si{background:var(--grl);color:var(--gr)}
+.combo-card:nth-child(4) .si{background:var(--pl);color:var(--p)}
+.cc-toggle{margin-top:10px;font-size:11px;color:var(--t3);display:flex;align-items:center;gap:4px}
+.cc-toggle .arrow{transition:transform .3s}.combo-card.open .cc-toggle .arrow{transform:rotate(180deg)}
+.combo-formula{margin-top:20px;padding:18px 24px;border-radius:12px;background:linear-gradient(135deg,rgba(77,130,224,.05),rgba(160,107,232,.05));border:1px solid var(--br2);text-align:center}
+.cf-text{font-size:clamp(15px,1.7vw,20px);font-weight:650;letter-spacing:-.01em;color:var(--t1);text-wrap:balance}
+.cf-text span{color:var(--g)}
+
+/* ═══ COMPOSER ═══ */
+.composer{margin-top:32px;border-radius:14px;border:1px solid var(--br);background:var(--s1);overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.03),0 20px 60px rgba(0,0,0,.35)}
+.cm-bar{height:44px;display:flex;align-items:center;gap:8px;padding:0 16px;border-bottom:1px solid var(--br)}
+.cm-bar .dots{display:flex;gap:6px}.cm-bar .dots i{width:9px;height:9px;border-radius:50%}
+.cm-bar .dots i:nth-child(1){background:#ff5f57}.cm-bar .dots i:nth-child(2){background:#f0a32c}.cm-bar .dots i:nth-child(3){background:#3ec04e}
+.cm-bar .t{font-size:11px;color:var(--t3);margin-left:8px}
+.cm-body{padding:20px;display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start}
+.cm-left{display:grid;gap:12px}
+.cm-quest{padding:14px 18px;background:var(--gl);border-radius:10px;display:flex;align-items:center;justify-content:space-between}
+.cm-quest small{font-size:10px;color:var(--g);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.cm-quest h3{font-size:15px;margin-top:2px}
+.cm-quest .badge{font-size:10px;color:var(--g);background:rgba(224,168,56,.08);padding:3px 8px;border-radius:4px;font-weight:600}
+.cm-hint{font-size:11px;color:var(--t3)}
+.agent-pool{display:flex;flex-wrap:wrap;gap:8px;padding:16px;background:var(--bg);border:1px dashed var(--br2);border-radius:10px;min-height:80px}
+.ap-item{padding:10px 14px;background:var(--s2);border:1.5px solid var(--br2);border-radius:8px;font-size:13px;font-weight:600;color:var(--t2);cursor:grab;user-select:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.ap-item:hover{border-color:var(--g);color:var(--g);transform:translateY(-1px)}
+.ap-item:active{cursor:grabbing;transform:scale(.96)}
+.ap-item.used{opacity:.3;pointer-events:none}
+.cm-right{display:grid;gap:12px;align-content:start}
+.cm-right .rl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;text-align:center}
+.drop-zone{padding:16px;border:2px dashed var(--br2);border-radius:12px;min-height:200px;display:flex;flex-wrap:wrap;gap:8px;align-content:start;transition:all .2s}
+.drop-zone.over{border-color:var(--g);background:rgba(224,168,56,.03);box-shadow:0 0 24px rgba(224,168,56,.06)}
+.drop-zone .empty{width:100%;text-align:center;color:var(--t3);font-size:13px;display:grid;place-items:center;min-height:160px}
+.drop-zone .empty b{display:block;font-size:28px;margin-bottom:8px}
+.dz-tag{padding:8px 12px;background:var(--gl);border:1.5px solid var(--g);border-radius:8px;font-size:12px;font-weight:600;color:var(--g);display:inline-flex;align-items:center;gap:6px;animation:pop .25s ease}
+.dz-tag .x{cursor:pointer;opacity:.5;font-size:13px;line-height:1}.dz-tag .x:hover{opacity:1}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
+.cm-output{padding:14px;background:var(--s2);border-radius:10px;border:1px solid var(--br2);min-height:60px}
+.cm-output .wait{color:var(--t3);font-size:12px;text-align:center;padding:8px}
+.cm-output .ready{display:none}.cm-output .ready.show{display:block;animation:pop .3s ease}
+.cm-output .ready small{color:var(--g);font-size:10px;font-weight:700;letter-spacing:.06em}
+.cm-output .ready h4{font-size:14px;margin:4px 0}
+.cm-output .ready p{color:var(--t2);font-size:12px;margin-top:4px;line-height:1.45}
+.cm-output .ready .chain{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.cm-output .ready .chain span{font-size:10px;color:var(--t3)}
+.cm-output .ready .chain .arr{color:var(--g)}
+
+/* ═══ ENGINES ═══ */
+.engines{margin-top:32px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.eng{padding:26px 22px;border-radius:14px;background:var(--s1);border:1px solid var(--br);position:relative;overflow:hidden;transition:all .3s;cursor:pointer}
+.eng:hover{border-color:var(--br2);transform:translateY(-3px)}
+.eng::before{content:"";position:absolute;inset:0;opacity:0;transition:opacity .4s;pointer-events:none}
+.eng:nth-child(1)::before{background:radial-gradient(circle at 50% 0%,rgba(77,130,224,.1),transparent 60%)}
+.eng:nth-child(2)::before{background:radial-gradient(circle at 50% 0%,rgba(224,168,56,.1),transparent 60%)}
+.eng:nth-child(3)::before{background:radial-gradient(circle at 50% 0%,rgba(160,107,232,.1),transparent 60%)}
+.eng:hover::before{opacity:1}
+.eng .ei{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-size:22px;margin-bottom:14px;transition:transform .3s}
+.eng:hover .ei{transform:scale(1.08)}
+.eng:nth-child(1) .ei{background:var(--bl);color:var(--b)}.eng:nth-child(2) .ei{background:var(--gl);color:var(--g)}.eng:nth-child(3) .ei{background:var(--pl);color:var(--p)}
+.eng h3{font-size:19px;margin-bottom:8px}
+.eng .desc{font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:12px}
+.eng .feats{display:grid;gap:6px}
+.eng .feat{font-size:12px;color:var(--t3);padding-left:14px;position:relative;line-height:1.5}
+.eng .feat::before{content:"";position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%}
+.eng:nth-child(1) .feat::before{background:var(--b)}.eng:nth-child(2) .feat::before{background:var(--g)}.eng:nth-child(3) .feat::before{background:var(--p)}
+.eng .more{font-size:12px;color:var(--t3);max-height:0;overflow:hidden;transition:max-height .4s,margin-top .3s;line-height:1.6}
+.eng.open .more{max-height:240px;margin-top:12px}
+.eng .toggle{margin-top:10px;font-size:11px;color:var(--t3);display:flex;align-items:center;gap:4px}
+.eng .toggle .arr{transition:transform .3s}.eng.open .toggle .arr{transform:rotate(180deg)}
+
+/* ═══ CHAT ═══ */
+.chat-section{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,80px);align-items:center}
+.chat-mock{border-radius:14px;border:1px solid var(--br);background:var(--s1);overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.03),0 24px 64px rgba(0,0,0,.4)}
+.ch-bar{height:44px;display:flex;align-items:center;gap:8px;padding:0 16px;border-bottom:1px solid var(--br)}
+.ch-bar .dots{display:flex;gap:6px}.ch-bar .dots i{width:9px;height:9px;border-radius:50%}
+.ch-bar .dots i:nth-child(1){background:#ff5f57}.ch-bar .dots i:nth-child(2){background:#f0a32c}.ch-bar .dots i:nth-child(3){background:#3ec04e}
+.ch-bar .t{font-size:11px;color:var(--t3);margin-left:8px}
+.ch-body{padding:18px;display:grid;gap:12px}
+.msg{padding:12px 16px;border-radius:10px;font-size:13px;line-height:1.55;max-width:88%}
+.msg.user{margin-left:auto;background:var(--bl);border:1px solid rgba(77,130,224,.2);color:#b0ccef}
+.msg.bot{background:var(--s2);border:1px solid var(--br2);color:var(--t1)}
+.msg.bot .agents{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.msg.bot .ap{padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600}
+.msg.bot .ap.b{background:var(--bl);color:#8eb4f5}.msg.bot .ap.g{background:var(--gl);color:#e8c87a}.msg.bot .ap.gr{background:var(--grl);color:#7de0ba}.msg.bot .ap.p{background:var(--pl);color:#c4a0f0}
+.msg.bot .res{margin-top:8px;padding:10px 12px;background:var(--bg);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.5}
+.ch-input{padding:10px 16px;border-top:1px solid var(--br);display:flex;align-items:center;gap:10px}
+.ch-input .field{flex:1;padding:8px 14px;background:var(--s2);border:1px solid var(--br2);border-radius:8px;font-size:12px;color:var(--t3)}
+.ch-input .send{padding:6px 14px;background:var(--br2);border-radius:6px;font-size:11px;color:var(--t3)}
+
+/* ═══ END ═══ */
+.end-sec{min-height:100svh;padding:clamp(56px,7vw,104px) clamp(24px,7vw,96px);display:flex;align-items:center;justify-content:center;text-align:center}
+.end-inner{max-width:720px}
+.end-inner h2{font-size:clamp(36px,5.5vw,68px);line-height:1.12;font-weight:700;letter-spacing:-.025em;text-wrap:balance}
+.end-inner p{margin:24px auto 0;max-width:500px;font-size:clamp(16px,1.6vw,20px);color:var(--t2);line-height:1.6;text-wrap:balance}
+.end-tags{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:32px}
+.end-tags span{padding:0 14px;height:34px;border-radius:8px;border:1px solid var(--br2);background:var(--s1);font-size:12px;font-weight:600;color:var(--t2);display:inline-flex;align-items:center;gap:6px}
+.end-tags span::before{content:"";width:4px;height:4px;border-radius:50%}
+.end-tags span:nth-child(1)::before{background:var(--b)}.end-tags span:nth-child(2)::before{background:var(--g)}.end-tags span:nth-child(3)::before{background:var(--p)}.end-tags span:nth-child(4)::before{background:var(--gr)}
+
+.fade{opacity:0;transform:translateY(14px);transition:.7s cubic-bezier(.22,.61,.36,1)}.fade.in{opacity:1;transform:none}
+
+/* ═══ FINANCE & TAX DEEP DIVE ═══ */
+.tax-deep{margin-top:32px;display:grid;gap:28px}
+.tx-label{font-size:14px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.tx-label::before{content:"";width:3px;height:14px;border-radius:2px}
+
+/* Tax Matrix */
+.tax-matrix{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.tax-cell{padding:16px 14px;border-radius:10px;background:var(--s1);border:1px solid var(--br);transition:all .3s;position:relative;overflow:hidden}
+.tax-cell:hover{border-color:var(--br2);transform:translateY(-2px)}
+.tax-cell::before{content:"";position:absolute;top:0;left:0;right:0;height:2px}
+.tax-cell:nth-child(4n+1)::before{background:var(--g)}.tax-cell:nth-child(4n+2)::before{background:var(--b)}
+.tax-cell:nth-child(4n+3)::before{background:var(--p)}.tax-cell:nth-child(4n+4)::before{background:var(--gr)}
+.tax-cell .tc-ico{font-size:20px;margin-bottom:8px}
+.tax-cell .tc-name{font-size:14px;font-weight:600;margin-bottom:4px}
+.tax-cell .tc-desc{font-size:11px;color:var(--t3);line-height:1.5;margin-bottom:8px}
+.tax-cell .tc-tags{display:flex;flex-wrap:wrap;gap:3px}
+.tax-cell .tc-tags em{font-style:normal;padding:2px 6px;border-radius:4px;background:var(--s2);font-size:9px;color:var(--t2);border:1px solid var(--br2)}
+.tax-cell .tc-status{margin-top:8px;display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;padding:3px 7px;border-radius:4px;background:var(--grl);color:#7de0ba}
+.tax-cell .tc-status::before{content:"";width:5px;height:5px;border-radius:50%;background:#7de0ba}
+
+/* Tax Pipeline */
+.tax-pipeline{padding:24px;border-radius:14px;background:var(--s1);border:1px solid var(--br);overflow:hidden}
+.tp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.tp-head .tp-title{font-size:14px;font-weight:600}
+.tp-head .tp-badge{font-size:10px;color:#7de0ba;background:var(--grl);padding:3px 10px;border-radius:4px;font-weight:600;display:flex;align-items:center;gap:5px}
+.tp-head .tp-badge::before{content:"";width:5px;height:5px;border-radius:50%;background:#7de0ba;animation:pulse 1.5s ease-in-out infinite}
+.tp-steps{display:flex;align-items:stretch;gap:0;flex-wrap:wrap}
+.tp-step{flex:1;min-width:110px;padding:14px 12px;background:var(--s2);border:1px solid var(--br2);border-radius:9px 0 0 9px;position:relative;transition:all .3s}
+.tp-step:last-child{border-radius:0 9px 9px 0}
+.tp-step:hover{background:var(--s3);transform:translateY(-2px)}
+.tp-step:not(:last-child)::after{content:"\2192";position:absolute;right:-8px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--t3);z-index:2;background:var(--bg);width:16px;height:16px;display:grid;place-items:center;border-radius:50%}
+.tp-step .ts-num{font-size:10px;color:var(--t3);font-weight:700;margin-bottom:4px}
+.tp-step .ts-name{font-size:13px;font-weight:600;margin-bottom:4px}
+.tp-step .ts-desc{font-size:10px;color:var(--t3);line-height:1.4}
+.tp-step .ts-agent{margin-top:6px;font-size:9px;color:var(--g);font-weight:600}
+
+/* Risk Grid */
+.risk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.risk-card{padding:18px 16px;border-radius:10px;background:var(--s1);border:1px solid var(--br);position:relative;overflow:hidden;transition:all .3s}
+.risk-card:hover{border-color:var(--br2);transform:translateY(-2px)}
+.risk-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--o)}
+.risk-card .rk-ico{font-size:18px;margin-bottom:8px}
+.risk-card .rk-title{font-size:14px;font-weight:600;margin-bottom:6px}
+.risk-card .rk-desc{font-size:11px;color:var(--t3);line-height:1.5}
+.risk-card .rk-metric{margin-top:8px;padding:5px 10px;background:var(--ol);border-radius:6px;font-size:10px;color:#e89890;font-weight:600;display:inline-flex;align-items:center;gap:4px}
+
+/* Integration Strip */
+.integration-strip{padding:18px 22px;border-radius:12px;background:var(--s1);border:1px solid var(--br);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.is-label{font-size:12px;color:var(--t3);font-weight:600;letter-spacing:.06em;white-space:nowrap}
+.is-badges{display:flex;gap:8px;flex-wrap:wrap}
+.is-badge{padding:8px 14px;background:var(--s2);border:1px solid var(--br2);border-radius:8px;font-size:12px;font-weight:600;color:var(--t2);display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+.is-badge:hover{border-color:var(--g);color:var(--g);transform:translateY(-1px)}
+.is-badge .dot{width:6px;height:6px;border-radius:50%;background:#3ec04e}
+
+/* Compare Table */
+.compare-wrap{padding:24px;border-radius:14px;background:var(--s1);border:1px solid var(--br);overflow:hidden}
+.compare-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:1px;background:var(--br);border-radius:10px;overflow:hidden}
+.cg-cell{padding:12px 16px;background:var(--s2)}
+.cg-head{background:var(--s3);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.cg-head.metric{color:var(--t3)}.cg-head.before{color:var(--o)}.cg-head.after{color:#7de0ba}
+.cg-cell .cg-val{font-size:17px;font-weight:700;line-height:1.2}
+.cg-cell .cg-val.before{color:var(--o)}.cg-cell .cg-val.after{color:#7de0ba}
+.cg-cell .cg-unit{font-size:10px;color:var(--t3);margin-top:2px}
+.cg-cell .cg-label{font-size:11px;color:var(--t2)}
+.cg-cell.metric-cell{display:flex;align-items:center}
+.cg-cell.metric-cell .cg-label{font-weight:600;color:var(--t1)}
+
+/* Tax Scenario Cards */
+.tax-scenarios{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tax-scn{padding:20px;border-radius:12px;background:var(--s1);border:1px solid var(--br);position:relative;overflow:hidden;transition:all .3s}
+.tax-scn:hover{border-color:var(--br2);transform:translateY(-2px)}
+.tax-scn::before{content:"";position:absolute;top:0;left:0;right:0;height:2px}
+.tax-scn:nth-child(1)::before{background:var(--b)}.tax-scn:nth-child(2)::before{background:var(--p)}
+.tax-scn .scn-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.tax-scn .scn-ico{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.tax-scn:nth-child(1) .scn-ico{background:var(--bl)}.tax-scn:nth-child(2) .scn-ico{background:var(--pl)}
+.tax-scn .scn-title{font-size:15px;font-weight:650}
+.tax-scn .scn-sub{font-size:11px;color:var(--t3);margin-top:1px}
+.tax-scn .scn-body{font-size:12px;color:var(--t2);line-height:1.6}
+.tax-scn .scn-body b{color:var(--t1);font-weight:600}
+.tax-scn .scn-steps{margin-top:10px;display:grid;gap:5px}
+.tax-scn .scn-step-item{display:flex;align-items:flex-start;gap:8px;font-size:11px;color:var(--t3);line-height:1.5}
+.tax-scn .scn-step-item .ssi{width:16px;height:16px;border-radius:4px;flex-shrink:0;display:grid;place-items:center;font-size:9px;font-weight:700}
+.tax-scn:nth-child(1) .ssi{background:var(--bl);color:var(--b)}.tax-scn:nth-child(2) .ssi{background:var(--pl);color:var(--p)}
+
+@media(max-width:1080px){.cover,.problem-grid,.sol-grid,.chat-section,.combo-grid,.cm-body,.tax-scenarios{grid-template-columns:1fr}.roles-grid,.engines,.risk-grid,.tax-matrix{grid-template-columns:1fr 1fr}.tp-steps{flex-direction:column;gap:8px}.tp-step{border-radius:9px!important;min-width:auto}.tp-step::after{display:none!important}.compare-grid{grid-template-columns:1fr}}
+@media(max-width:640px){.sec{padding:48px 18px}.end-sec{padding:64px 18px}h1{font-size:30px}h2{font-size:24px}.roles-grid,.engines,.risk-grid,.tax-matrix{grid-template-columns:1fr}.ap-stats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+
+<!-- ═══ COVER ═══ -->
+<section class="cover fade">
+  <div class="cover-left">
+    <div class="brand"><span class="b-dot"></span>CrewOS</div>
+    <h1>智能体协作<br><em>操作系统。</em></h1>
+    <p class="sub">以智能体为中心的企业级 AI 协作平台。把模型、技能、SaaS 业务、数据、流程统一到一个可编排的操作系统中，让任何能力都可以像乐高一样被接入、组合、调度和自动化。</p>
+    <div class="cover-meta">
+      <span>SaaS 业务底座</span>
+      <span>MCP 开放协议</span>
+      <span>多智能体编排</span>
+      <span>技能市场</span>
+    </div>
+  </div>
+  <div class="activity-panel">
+    <div class="ap-bar">
+      <div class="l"><div class="dots"><i></i><i></i><i></i></div><span class="t">CrewOS · 实时态势</span></div>
+      <span class="live">运行中</span>
+    </div>
+    <div class="ap-body">
+      <div class="ap-row">
+        <div class="ap-ico b">📣</div>
+        <div class="ap-mid"><b>营销 Agent</b><span>正在生成 Q3 内容日历 — 12 条短视频脚本</span></div>
+        <span class="ap-status run">执行中</span>
+      </div>
+      <div class="ap-row">
+        <div class="ap-ico gr">👥</div>
+        <div class="ap-mid"><b>CRM Agent</b><span>从线索池筛出 142 个高意向客户，自动排好跟进优先级</span></div>
+        <span class="ap-status run">执行中</span>
+      </div>
+      <div class="ap-row">
+        <div class="ap-ico g">🧾</div>
+        <div class="ap-mid"><b>合同 Agent</b><span>预审 3 份合同条款，标记 2 处风险：付款条件偏长、违约金缺失</span></div>
+        <span class="ap-status wait">待确认</span>
+      </div>
+      <div class="ap-row">
+        <div class="ap-ico p">💰</div>
+        <div class="ap-mid"><b>财税 Agent</b><span>本月 8 个税种申报完成，增值税留抵 ¥12.4 万，利润率 34%</span></div>
+        <span class="ap-status done">已完成</span>
+      </div>
+      <div class="ap-flow">
+        <span class="fb">📣 获客</span><span class="fa">→</span>
+        <span class="fb">👥 分层</span><span class="fa">→</span>
+        <span class="fb">💼 跟进</span><span class="fa">→</span>
+        <span class="fb">🧾 签约</span><span class="fa">→</span>
+        <span class="fb">📦 交付</span><span class="fa">→</span>
+        <span class="fb">💰 结算</span>
+      </div>
+      <div class="ap-stats">
+        <div class="ap-stat"><strong>7</strong><span>活跃智能体</span></div>
+        <div class="ap-stat"><strong>¥312k</strong><span>预计首月营收</span></div>
+        <div class="ap-stat"><strong>34%</strong><span>预计利润率</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROBLEM ═══ -->
+<section class="sec fade">
+  <div class="sec-tag">问题定义</div>
+  <h2>企业 AI 的现状：<br><em class="b">能力碎片化，协作不存在。</em></h2>
+  <div class="problem-grid">
+    <div>
+      <p class="para">过去两年，大模型证明了 AI 可以完成复杂的单点任务：写文案、审合同、分析数据、回答问题。但企业把 AI 用起来之后，发现了一个更深的问题——<strong>单点能力再强，如果不能串联成流程，就只是一个更快的搜索框。</strong></p>
+      <p class="para">企业真正需要的不是"会聊天的助手"，而是<strong>能干活的团队</strong>。一个能独立完成"从获客到回款"全链路的协作体系，而不是一堆需要人去手动衔接的 AI 工具。</p>
+      <p class="para">这就是 CrewOS 要解决的核心问题：<em>让智能体像团队成员一样分工、协作、交付</em>，而不是让老板去当智能体之间的"人肉路由器"。</p>
+    </div>
+    <div class="pain-list">
+      <div class="pain-item">
+        <span class="tag-pain">痛点 01</span>
+        <b>工具割裂，上下文丢失</b>
+        <p>聊天工具、CRM、合同系统、财税平台各自为政。AI 在 A 系统里生成的结论，到 B 系统里完全不知道。每次切换都在丢上下文。</p>
+      </div>
+      <div class="pain-item">
+        <span class="tag-pain">痛点 02</span>
+        <b>能力无法复用</b>
+        <p>同一个"客户分层"逻辑，营销要用、销售要用、客服也要用。但现在每个 AI 工具都要从头定义一遍，能力无法标准化沉淀和跨场景复用。</p>
+      </div>
+      <div class="pain-item">
+        <span class="tag-pain">痛点 03</span>
+        <b>流程无法自动化</b>
+        <p>AI 能做单步任务，但不能自主编排多步流程。老板说"把这个产品卖到 30 万"，现有工具无法自动拆解为获客→跟进→签约→交付→结算的执行链路。</p>
+      </div>
+      <div class="pain-item">
+        <span class="tag-pain">痛点 04</span>
+        <b>数据不沉淀</b>
+        <p>AI 生成的内容、做出的决策、执行的过程，用完即走。没有 SaaS 底座，客户、合同、票据、任务、审批等业务数据无法持续沉淀，AI 每次都从零开始。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SOLUTION ═══ -->
+<section class="sec fade">
+  <div class="sec-tag">方案概述</div>
+  <h2>CrewOS：不是 AI 工具，<br><em class="go">是智能体的操作系统。</em></h2>
+  <p class="lead" style="margin-top:18px">CrewOS 把企业 AI 从"单点工具"升级为"协作操作系统"。大模型驱动每个 Agent 的推理与决策，SaaS 底座承载业务数据，MCP 协议连接外部系统，技能市场标准化能力，编排引擎自动串联流程。</p>
+
+  <div class="sol-grid">
+    <div>
+      <p class="para">传统的 AI 产品思路是"<strong>给老板一个更聪明的聊天框</strong>"。CrewOS 的思路完全不同：给企业一个<strong>能自主运转的智能体团队</strong>。</p>
+      <p class="para">每个智能体（Agent）负责一个业务职能——营销、CRM、销售、合同、交付、财税、运营。每个 Agent 自带该岗位的专业技能（Skill），技能像 App 一样标准化封装，可以在不同 Agent 之间复用和组合。</p>
+      <p class="para">老板只需要说出目标，编排引擎自动拆解任务、组建团队、分配技能、执行流程、监控异常、返回结果。<strong>对话只是入口，背后是一支军团在协作。</strong></p>
+      <p class="para">更重要的是，CrewOS 自带完整的 <em>SaaS 业务底座</em>——客户管理、合同管理、财税申报、协同审批、项目管理等能力开箱即用。Agent 不是飘在聊天框里，而是直接在真实的业务数据上工作，每次操作的输入输出都有据可查、可追溯、可审计。</p>
+    </div>
+    <div class="sol-points">
+      <div class="sol-point" onclick="this.classList.toggle('open')">
+        <span class="sp-num">01</span>
+        <h3>SaaS 业务原生</h3>
+        <p>自带客户、合同、票据、项目、审批等完整企业经营能力。Agent 直接在业务数据上工作，不需要外挂对接。</p>
+        <div class="expand">所有业务数据在平台内原生沉淀：客户档案、合同台账、票据池、项目进度、审批记录。Agent 的每一次读写都基于真实业务数据，操作留痕、可审计、可回溯。</div>
+      </div>
+      <div class="sol-point" onclick="this.classList.toggle('open')">
+        <span class="sp-num">02</span>
+        <h3>万物可接（MCP）</h3>
+        <p>通过 MCP 开放协议，任何外部 API、数据库、第三方服务都能即插即用，成为智能体可调用的资源。</p>
+        <div class="expand">标准协议接入，双向通信，实时数据同步。新系统接入只需实现协议接口，零代码改造。支持私有化部署与权限管控。</div>
+      </div>
+      <div class="sol-point" onclick="this.classList.toggle('open')">
+        <span class="sp-num">03</span>
+        <h3>能力可拼（技能市场）</h3>
+        <p>技能像 App 一样被标准化封装。企业可以挑选、组合、复用，也可以把内部最佳实践发布到生态。</p>
+        <div class="expand">每个技能独立封装，有标准输入输出接口。跨 Agent、跨场景复用。技能版本可管理、可回滚、可追踪调用量。支持第三方贡献。</div>
+      </div>
+      <div class="sol-point" onclick="this.classList.toggle('open')">
+        <span class="sp-num">04</span>
+        <h3>流程可编排</h3>
+        <p>复杂业务被自动拆解为可执行的智能体流水线。每个环节可监控、可干预、可优化。</p>
+        <div class="expand">编排引擎接收目标后自动拆解为子任务，分配给合适的 Agent。大模型作为底层推理引擎驱动每个 Agent。支持在任何节点插入人工审批，老板可以在关键决策点介入，其余全自动。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ARCHITECTURE ═══ -->
+<section class="sec fade">
+  <div class="sec-tag">系统架构</div>
+  <h2>五层架构，<br><em class="b">从底座到编排一体化。</em></h2>
+  <p class="lead" style="margin-top:18px">不是拼凑的工具链，而是一个从 SaaS 业务数据到智能体编排的完整操作系统。每一层都有明确的职责边界，层与层之间通过标准接口通信。</p>
+
+  <div class="arch-diagram">
+    <div class="ad-bar"><div class="dots"><i></i><i></i><i></i></div><span class="t">CrewOS · Architecture</span><span style="margin-left:auto;font-size:10px;color:#3ec04e">Live</span></div>
+    <div class="ad-body">
+      <div class="ad-layer">
+        <div class="al-head"><span class="al-num">1</span><h4>SaaS 业务底座</h4><span>原生企业经营能力</span><span class="line"></span></div>
+        <div class="al-blocks">
+          <span class="alb blue">客户管理</span><span class="alb blue">协同审批</span><span class="alb blue">合同管理</span><span class="alb blue">财税申报</span><span class="alb blue">票据管理</span><span class="alb blue">项目管理</span><span class="alb blue">资金管理</span><span class="alb blue">成本核算</span><span class="alb blue">汇算清缴</span><span class="alb blue">数据分析</span><span class="alb gray">+ 可扩展</span>
+        </div>
+      </div>
+      <div class="ad-layer">
+        <div class="al-head"><span class="al-num">2</span><h4>MCP 接入层</h4><span>开放协议连接外部系统</span><span class="line"></span></div>
+        <div class="al-blocks">
+          <span class="alb blue">外部 API</span><span class="alb blue">数据库</span><span class="alb blue">第三方服务</span><span class="alb blue">支付通道</span><span class="alb blue">签署平台</span><span class="alb gray">+ 任意协议端点</span>
+        </div>
+      </div>
+      <div class="ad-layer">
+        <div class="al-head"><span class="al-num">3</span><h4>技能层</h4><span>像 App 一样标准化的能力</span><span class="line"></span></div>
+        <div class="al-blocks">
+          <span class="alb gold">客户分层</span><span class="alb gold">内容生成</span><span class="alb gold">合同审查</span><span class="alb gold">票据识别</span><span class="alb gold">报价测算</span><span class="alb gold">风险预警</span><span class="alb gold">发票验真</span><span class="alb gold">税负测算</span><span class="alb gold">政策追踪</span><span class="alb gold">数据分析</span><span class="alb gray">+ 自定义</span>
+        </div>
+      </div>
+      <div class="ad-layer">
+        <div class="al-head"><span class="al-num">4</span><h4>智能体层</h4><span>各司其职的数字员工</span><span class="line"></span></div>
+        <div class="al-blocks">
+          <span class="alb green">营销 Agent</span><span class="alb green">CRM Agent</span><span class="alb green">销售 Agent</span><span class="alb green">合同 Agent</span><span class="alb green">交付 Agent</span><span class="alb green">财税 Agent</span><span class="alb gray">+ 自定义</span>
+        </div>
+      </div>
+      <div class="ad-layer">
+        <div class="al-head"><span class="al-num">5</span><h4>编排层</h4><span>自动组合成业务流水线</span><span class="line"></span></div>
+        <div class="al-pipe">
+          <span class="alp">📣 获客</span><span class="ala">→</span>
+          <span class="alp">👥 分层</span><span class="ala">→</span>
+          <span class="alp">💼 跟进</span><span class="ala">→</span>
+          <span class="alp">🧾 签约</span><span class="ala">→</span>
+          <span class="alp">📦 交付</span><span class="ala">→</span>
+          <span class="alp">💰 结算</span><span class="ala">→</span>
+          <span class="alp">📊 复盘</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ AGENT ROLES ═══ -->
+<section class="sec fade">
+  <div class="sec-tag">智能体角色</div>
+  <h2>一个岗位，<br><em class="g">一个 Agent。</em></h2>
+  <p class="lead" style="margin-top:18px">每个 Agent 负责一个业务职能，自带该岗位的专业 Skill。大模型在背后驱动每个 Agent 的推理、规划和决策——它不是独立角色，而是所有 Agent 的底层引擎。</p>
+
+  <div class="roles-grid">
+    <div class="role-card">
+      <div class="rc-head"><div class="rc-ico">📣</div><div><h3>营销 Agent</h3><div class="rc-count">4 个子角色</div></div></div>
+      <p class="rc-desc">从市场定位到内容生产到投放执行的全链路获客。</p>
+      <div class="rc-sub-label">岗位下的智能体</div>
+      <div class="rc-subs">
+        <div class="rc-sub"><div class="rs-ico">🎯</div><div class="rs-mid"><b>市场定位师</b><span>分析市场格局、锁定人群、制定差异化定位</span><div class="rs-tags"><em>市场分析</em><em>人群画像</em><em>定位策略</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">✍️</div><div class="rs-mid"><b>内容创作师</b><span>生成短视频脚本、落地页文案、私域话术</span><div class="rs-tags"><em>文案生成</em><em>脚本创作</em><em>素材策划</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">📊</div><div class="rs-mid"><b>投放优化师</b><span>管理广告预算、A/B 测试、ROI 追踪</span><div class="rs-tags"><em>预算分配</em><em>AB测试</em><em>ROI追踪</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">🎉</div><div class="rs-mid"><b>活动策划师</b><span>策划营销活动、设计转化路径、追踪效果</span><div class="rs-tags"><em>活动方案</em><em>转化路径</em><em>效果归因</em></div></div></div>
+      </div>
+      <div class="rc-flow">四个子角色自动协作：定位师确定方向 → 创作师生产内容 → 投放优化师执行投放 → 活动策划师设计转化路径。根据 CRM Agent 反馈的线索质量，动态调整内容方向和投放预算。</div>
+    </div>
+    <div class="role-card">
+      <div class="rc-head"><div class="rc-ico">👥</div><div><h3>CRM Agent</h3><div class="rc-count">4 个子角色</div></div></div>
+      <p class="rc-desc">接住所有线索，自动打标签、分意向、排优先级。</p>
+      <div class="rc-sub-label">岗位下的智能体</div>
+      <div class="rc-subs">
+        <div class="rc-sub"><div class="rs-ico">📥</div><div class="rs-mid"><b>线索接单人</b><span>从各渠道接住线索，自动建档去重</span><div class="rs-tags"><em>线索归集</em><em>自动建档</em><em>去重清洗</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">🏷️</div><div class="rs-mid"><b>客户分层师</b><span>根据行为轨迹打标签、分意向等级</span><div class="rs-tags"><em>标签体系</em><em>意向评分</em><em>分层策略</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">📅</div><div class="rs-mid"><b>跟进调度员</b><span>安排跟进节奏，把高意向推给销售</span><div class="rs-tags"><em>跟进排期</em><em>优先级排序</em><em>转交销售</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">🔄</div><div class="rs-mid"><b>客户运营官</b><span>管理客户生命周期，做留存和召回</span><div class="rs-tags"><em>生命周期</em><em>留存策略</em><em>召回触达</em></div></div></div>
+      </div>
+      <div class="rc-flow">四个子角色形成闭环：接单人归集线索 → 分层师打标分级 → 调度员安排跟进 → 运营官做长期留存。高意向客户自动推给销售 Agent，低意向客户进入培育池。</div>
+    </div>
+    <div class="role-card">
+      <div class="rc-head"><div class="rc-ico">💼</div><div><h3>销售 Agent</h3><div class="rc-count">4 个子角色</div></div></div>
+      <p class="rc-desc">推进转化，生成个性化报价和跟进策略。</p>
+      <div class="rc-sub-label">岗位下的智能体</div>
+      <div class="rc-subs">
+        <div class="rc-sub"><div class="rs-ico">💼</div><div class="rs-mid"><b>商务跟进员</b><span>一对一推进关键客户，处理异议</span><div class="rs-tags"><em>客户跟进</em><em>异议处理</em><em>关系维护</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">💴</div><div class="rs-mid"><b>报价测算师</b><span>根据客户画像生成个性化报价方案</span><div class="rs-tags"><em>报价生成</em><em>折扣策略</em><em>利润测算</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">📞</div><div class="rs-mid"><b>回访专员</b><span>签约后回访、收集反馈、推动续约</span><div class="rs-tags"><em>满意度回访</em><em>续约提醒</em><em>反馈收集</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">📋</div><div class="rs-mid"><b>丢单复盘师</b><span>分析丢单原因，优化销售策略</span><div class="rs-tags"><em>丢单分析</em><em>策略优化</em><em>话术迭代</em></div></div></div>
+      </div>
+      <div class="rc-flow">四个子角色覆盖完整销售周期：跟进员推进转化 → 测算师给出报价 → 回访专员做售后 → 复盘师优化策略。提醒老板只在签约决策点介入。</div>
+    </div>
+    <div class="role-card">
+      <div class="rc-head"><div class="rc-ico">🧾</div><div><h3>合同 Agent</h3><div class="rc-count">4 个子角色</div></div></div>
+      <p class="rc-desc">从合同生成到签署到履约的全生命周期管理。</p>
+      <div class="rc-sub-label">岗位下的智能体</div>
+      <div class="rc-subs">
+        <div class="rc-sub"><div class="rs-ico">📄</div><div class="rs-mid"><b>合同起草员</b><span>调用标准模板生成合同，填入业务数据</span><div class="rs-tags"><em>模板管理</em><em>自动起草</em><em>条款填充</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">🔍</div><div class="rs-mid"><b>条款审查师</b><span>逐条扫描合同，标记异常和风险条款</span><div class="rs-tags"><em>条款比对</em><em>风险识别</em><em>合规检查</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">✍️</div><div class="rs-mid"><b>签署协调员</b><span>管理签署流程，跟踪各方签章进度</span><div class="rs-tags"><em>签署流程</em><em>签章追踪</em><em>归档管理</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">⏰</div><div class="rs-mid"><b>履约监督员</b><span>跟踪履约节点，提醒到期和续签</span><div class="rs-tags"><em>节点跟踪</em><em>到期提醒</em><em>续签预警</em></div></div></div>
+      </div>
+      <div class="rc-flow">四个子角色形成完整链路：起草员生成合同 → 审查师标记风险 → 协调员推进签署 → 监督员跟踪履约。风险条款自动标记，修改建议一键生成。</div>
+    </div>
+    <div class="role-card">
+      <div class="rc-head"><div class="rc-ico">📦</div><div><h3>交付 Agent</h3><div class="rc-count">4 个子角色</div></div></div>
+      <p class="rc-desc">把签约后的承诺变成可执行的项目计划。</p>
+      <div class="rc-sub-label">岗位下的智能体</div>
+      <div class="rc-subs">
+        <div class="rc-sub"><div class="rs-ico">📋</div><div class="rs-mid"><b>项目经理</b><span>拆解项目为任务清单，排期排人</span><div class="rs-tags"><em>任务拆解</em><em>排期管理</em><em>资源分配</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">📊</div><div class="rs-mid"><b>进度跟踪员</b><span>跟进每个节点，同步进度给客户</span><div class="rs-tags"><em>进度同步</em><em>节点提醒</em><em>客户通知</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">⚠️</div><div class="rs-mid"><b>风险预警官</b><span>识别延期和质量风险，提前预警</span><div class="rs-tags"><em>风险识别</em><em>延期预警</em><em>升级处理</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">📦</div><div class="rs-mid"><b>交付验收员</b><span>组织验收、收集确认、完成归档</span><div class="rs-tags"><em>验收管理</em><em>确认收集</em><em>项目归档</em></div></div></div>
+      </div>
+      <div class="rc-flow">四个子角色覆盖项目全周期：经理拆解任务 → 跟踪员同步进度 → 预警官识别风险 → 验收员完成交付。进度自动同步给 CRM Agent 转告客户。</div>
+    </div>
+    <div class="role-card">
+      <div class="rc-head"><div class="rc-ico">💰</div><div><h3>财税 Agent</h3><div class="rc-count">6 个子角色</div></div></div>
+      <p class="rc-desc">从票据采集到纳税申报到经营分析的全链路财税自动化，覆盖 8 大税种、月结/年结/汇算清缴全周期。</p>
+      <div class="rc-sub-label">岗位下的智能体</div>
+      <div class="rc-subs">
+        <div class="rc-sub"><div class="rs-ico">🧾</div><div class="rs-mid"><b>出纳</b><span>银企直联自动拉取流水、收付款智能匹配、资金日报与头寸预测</span><div class="rs-tags"><em>流水管理</em><em>收付款</em><em>资金日报</em><em>头寸预测</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">📑</div><div class="rs-mid"><b>开票员</b><span>全电发票自动开具、发票池全生命周期管理、作废冲红与红字发票</span><div class="rs-tags"><em>全电发票</em><em>发票池</em><em>作废冲红</em><em>额度监控</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">📒</div><div class="rs-mid"><b>总账会计</b><span>多渠道票据智能归集、自动制单与科目映射、三大报表一键编制</span><div class="rs-tags"><em>票据归集</em><em>自动制单</em><em>三大报表</em><em>期末结转</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">🏛️</div><div class="rs-mid"><b>税务师</b><span>8 大税种自动计算、申报表智能生成、申报节点跟踪与逻辑校验</span><div class="rs-tags"><em>增值税</em><em>企税汇算</em><em>个税</em><em>附加税</em><em>印花税</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">🛡️</div><div class="rs-mid"><b>税务风控官</b><span>发票验真与异常监控、税负率预警、优惠政策匹配、政策更新追踪</span><div class="rs-tags"><em>发票验真</em><em>税负预警</em><em>优惠匹配</em><em>政策追踪</em></div></div></div>
+        <div class="rc-sub"><div class="rs-ico">📈</div><div class="rs-mid"><b>财务分析师</b><span>多维度成本核算、现金流预测、经营健康度评分与决策建议</span><div class="rs-tags"><em>成本核算</em><em>现金流预测</em><em>经营洞察</em><em>决策建议</em></div></div></div>
+      </div>
+      <div class="rc-flow">六个子角色覆盖完整财税链路：出纳管资金 → 开票员管发票 → 总账会计做账 → 税务师报税 → 风控官查风险 → 分析师出洞察。每月自动生成报税清单和申报提醒，每季度输出税负优化建议，利润和现金流数据实时同步给运营 Agent。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FINANCE & TAX DEEP DIVE ═══ -->
+<section class="sec fade">
+  <div class="sec-tag">财税能力深度解析</div>
+  <h2>从票据到报税，<br><em class="go">全链路财税自动化。</em></h2>
+  <p class="lead" style="margin-top:18px">财税 Agent 不是简单的记账工具，而是一个覆盖<strong>8 大税种、全流程自动化、主动式风控</strong>的智能财务团队。从票据采集到纳税申报到经营分析，每个环节都有专属子角色负责，外部系统通过标准协议无缝对接。</p>
+
+  <div class="tax-deep">
+    <!-- 1. Tax Type Matrix -->
+    <div>
+      <div class="tx-label" style="color:var(--g)"><span style="background:var(--g)"></span>税种自动化覆盖矩阵</div>
+      <div class="tax-matrix">
+        <div class="tax-cell">
+          <div class="tc-ico">📊</div>
+          <div class="tc-name">增值税</div>
+          <div class="tc-desc">销项税额核算、进项税额抵扣与转出、未开票收入预提、留抵税额跟踪</div>
+          <div class="tc-tags"><em>销项核算</em><em>进项抵扣</em><em>进项转出</em><em>留抵跟踪</em></div>
+          <span class="tc-status">全自动</span>
+        </div>
+        <div class="tax-cell">
+          <div class="tc-ico">🏢</div>
+          <div class="tc-name">企业所得税</div>
+          <div class="tc-desc">季度预缴申报、年度汇算清缴、纳税调整事项自动识别、亏损弥补跟踪</div>
+          <div class="tc-tags"><em>季度预缴</em><em>汇算清缴</em><em>纳税调整</em><em>亏损弥补</em></div>
+          <span class="tc-status">全自动</span>
+        </div>
+        <div class="tax-cell">
+          <div class="tc-ico">👤</div>
+          <div class="tc-name">个人所得税</div>
+          <div class="tc-desc">工资薪金累计预扣、劳务报酬、年终奖优化、专项附加扣除采集</div>
+          <div class="tc-tags"><em>累计预扣</em><em>年终奖</em><em>专项扣除</em><em>汇算</em></div>
+          <span class="tc-status">全自动</span>
+        </div>
+        <div class="tax-cell">
+          <div class="tc-ico">📝</div>
+          <div class="tc-name">印花税</div>
+          <div class="tc-desc">合同税目智能识别、资金账簿、应税凭证自动分类与申报</div>
+          <div class="tc-tags"><em>税目识别</em><em>资金账簿</em><em>凭证分类</em></div>
+          <span class="tc-status">全自动</span>
+        </div>
+        <div class="tax-cell">
+          <div class="tc-ico">➕</div>
+          <div class="tc-name">附加税</div>
+          <div class="tc-desc">城建税、教育费附加、地方教育附加，随增值税自动联动计算</div>
+          <div class="tc-tags"><em>城建税</em><em>教育附加</em><em>地方教育</em></div>
+          <span class="tc-status">全自动</span>
+        </div>
+        <div class="tax-cell">
+          <div class="tc-ico">🏠</div>
+          <div class="tc-name">房产税 / 土地使用税</div>
+          <div class="tc-desc">从价从租计征、分期申报自动排期、减免优惠条件匹配与备案</div>
+          <div class="tc-tags"><em>从价计征</em><em>从租计征</em><em>减免匹配</em></div>
+          <span class="tc-status">全自动</span>
+        </div>
+        <div class="tax-cell">
+          <div class="tc-ico">🚗</div>
+          <div class="tc-name">车船税 / 环保税</div>
+          <div class="tc-desc">排量排放量自动匹配税目、申报表自动生成、代扣代缴协调</div>
+          <div class="tc-tags"><em>税目匹配</em><em>申报生成</em><em>代扣代缴</em></div>
+          <span class="tc-status">半自动</span>
+        </div>
+        <div class="tax-cell">
+          <div class="tc-ico">🚢</div>
+          <div class="tc-name">关税 / 出口退税</div>
+          <div class="tc-desc">报关单数据同步、免抵退计算、退税申报跟踪与单证备案</div>
+          <div class="tc-tags"><em>报关同步</em><em>免抵退</em><em>退税申报</em></div>
+          <span class="tc-status">半自动</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Tax Pipeline -->
+    <div>
+      <div class="tx-label" style="color:var(--b)"><span style="background:var(--b)"></span>财税全流程自动化流水线</div>
+      <div class="tax-pipeline">
+        <div class="tp-head">
+          <span class="tp-title">票据采集 → 归档备查 · 全链路 8 步自动化</span>
+          <span class="tp-badge">运行中</span>
+        </div>
+        <div class="tp-steps">
+          <div class="tp-step">
+            <div class="ts-num">STEP 1</div>
+            <div class="ts-name">票据采集</div>
+            <div class="ts-desc">OCR 识别、邮箱抓取、API 拉取、银企直联</div>
+            <div class="ts-agent">出纳 · 总账会计</div>
+          </div>
+          <div class="tp-step">
+            <div class="ts-num">STEP 2</div>
+            <div class="ts-name">智能识别</div>
+            <div class="ts-desc">发票验真、分类归集、异常标记、重复拦截</div>
+            <div class="ts-agent">风控官 · 总账会计</div>
+          </div>
+          <div class="tp-step">
+            <div class="ts-num">STEP 3</div>
+            <div class="ts-name">凭证生成</div>
+            <div class="ts-desc">自动制单、科目映射、辅助核算、多维度标签</div>
+            <div class="ts-agent">总账会计</div>
+          </div>
+          <div class="tp-step">
+            <div class="ts-num">STEP 4</div>
+            <div class="ts-name">账务处理</div>
+            <div class="ts-desc">试算平衡、结转损益、期末调整、合并抵销</div>
+            <div class="ts-agent">总账会计</div>
+          </div>
+          <div class="tp-step">
+            <div class="ts-num">STEP 5</div>
+            <div class="ts-name">报表编制</div>
+            <div class="ts-desc">资产负债表、利润表、现金流量表一键生成</div>
+            <div class="ts-agent">总账会计 · 分析师</div>
+          </div>
+          <div class="tp-step">
+            <div class="ts-num">STEP 6</div>
+            <div class="ts-name">纳税申报</div>
+            <div class="ts-desc">各税种申报表自动生成、逻辑校验、电子税务局直报</div>
+            <div class="ts-agent">税务师 · 风控官</div>
+          </div>
+          <div class="tp-step">
+            <div class="ts-num">STEP 7</div>
+            <div class="ts-name">缴款确认</div>
+            <div class="ts-desc">银企直联自动缴款、回单匹配、资金扣减核销</div>
+            <div class="ts-agent">出纳</div>
+          </div>
+          <div class="tp-step">
+            <div class="ts-num">STEP 8</div>
+            <div class="ts-name">归档备查</div>
+            <div class="ts-desc">电子会计档案、审计轨迹留存、可追溯查询</div>
+            <div class="ts-agent">总账会计 · 风控官</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Tax Risk Control -->
+    <div>
+      <div class="tx-label" style="color:var(--o)"><span style="background:var(--o)"></span>税务风控体系 — 6 道防线</div>
+      <div class="risk-grid">
+        <div class="risk-card">
+          <div class="rk-ico">🔍</div>
+          <div class="rk-title">发票风险监控</div>
+          <div class="rk-desc">红冲/作废实时监控、异常凭证预警、重复报销自动拦截、虚开发票识别</div>
+          <span class="rk-metric">⚠ 事前拦截</span>
+        </div>
+        <div class="risk-card">
+          <div class="rk-ico">📉</div>
+          <div class="rk-title">税负率预警</div>
+          <div class="rk-desc">行业税负基准比对、税负率异常波动提醒、同行业排名对比、税负优化建议</div>
+          <span class="rk-metric">⚠ 动态监控</span>
+        </div>
+        <div class="risk-card">
+          <div class="rk-ico">🔗</div>
+          <div class="rk-title">关联交易审查</div>
+          <div class="rk-desc">转让定价合理性检查、关联申报完整性校验、同期资料自动准备</div>
+          <span class="rk-metric">⚠ 定期扫描</span>
+        </div>
+        <div class="risk-card">
+          <div class="rk-ico">🎁</div>
+          <div class="rk-title">税收优惠管理</div>
+          <div class="rk-desc">资格到期提醒、优惠条件持续监控、自动备案、优惠力度最大化匹配</div>
+          <span class="rk-metric">⚠ 到期预警</span>
+        </div>
+        <div class="risk-card">
+          <div class="rk-ico">📡</div>
+          <div class="rk-title">政策更新追踪</div>
+          <div class="rk-desc">税法变更自动推送、影响评估分析、申报表版本管理、合规口径同步</div>
+          <span class="rk-metric">⚠ 实时推送</span>
+        </div>
+        <div class="risk-card">
+          <div class="rk-ico">🛡️</div>
+          <div class="rk-title">涉税稽查应对</div>
+          <div class="rk-desc">风险事项清单管理、自查报告自动生成、证据链整理归集、应对策略建议</div>
+          <span class="rk-metric">⚠ 主动防御</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. External Integration -->
+    <div class="integration-strip">
+      <span class="is-label">外部系统无缝对接</span>
+      <div class="is-badges">
+        <span class="is-badge"><span class="dot"></span>金税系统（金税盘 / 税务UKey）</span>
+        <span class="is-badge"><span class="dot"></span>电子税务局（全电发票）</span>
+        <span class="is-badge"><span class="dot"></span>银企直联</span>
+        <span class="is-badge"><span class="dot"></span>个税扣缴端</span>
+        <span class="is-badge"><span class="dot"></span>社保公积金系统</span>
+        <span class="is-badge"><span class="dot"></span>电子发票服务平台</span>
+        <span class="is-badge"><span class="dot"></span>海关报关系统</span>
+      </div>
+    </div>
+
+    <!-- 5. Scenario Cards -->
+    <div>
+      <div class="tx-label" style="color:var(--p)"><span style="background:var(--p)"></span>典型自动化场景</div>
+      <div class="tax-scenarios">
+        <div class="tax-scn">
+          <div class="scn-head">
+            <div class="scn-ico">📅</div>
+            <div>
+              <div class="scn-title">月结自动化</div>
+              <div class="scn-sub">每月 1-5 日自动执行，从关账到申报一键完成</div>
+            </div>
+          </div>
+          <div class="scn-body">
+            <b>触发条件：</b>月末最后一天 23:00 自动启动。总账会计归集当月全部票据 → 试算平衡 → 结转损益 → 生成三大报表。税务师同步计算增值税、附加税、印花税、个税，生成申报表初稿。风控官扫描发票异常与税负波动。分析师输出月度经营简报。
+            <div class="scn-steps">
+              <div class="scn-step-item"><span class="ssi">1</span><div>总账会计：票据归集 + 试算平衡 + 结转损益</div></div>
+              <div class="scn-step-item"><span class="ssi">2</span><div>税务师：各税种计算 + 申报表生成 + 逻辑校验</div></div>
+              <div class="scn-step-item"><span class="ssi">3</span><div>风控官：发票异常扫描 + 税负率比对 + 风险标记</div></div>
+              <div class="scn-step-item"><span class="ssi">4</span><div>出纳：银企直联缴款 + 回单匹配 + 资金核销</div></div>
+              <div class="scn-step-item"><span class="ssi">5</span><div>分析师：经营简报 + 利润分析 + 决策建议</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="tax-scn">
+          <div class="scn-head">
+            <div class="scn-ico">🏛️</div>
+            <div>
+              <div class="scn-title">年度汇算清缴</div>
+              <div class="scn-sub">次年 1-5 月，自动完成企税年度申报与退税/补税</div>
+            </div>
+          </div>
+          <div class="scn-body">
+            <b>核心能力：</b>自动归集全年账务数据 → 识别纳税调整事项（招待费超标、广宣费超限、研发加计扣除等） → 生成年度纳税申报表及附表 → 风控官交叉校验 → 电子税务局直报。同步输出税务健康度报告与次年优化建议。
+            <div class="scn-steps">
+              <div class="scn-step-item"><span class="ssi">1</span><div>总账会计：全年数据归集 + 年结调整 + 报表定稿</div></div>
+              <div class="scn-step-item"><span class="ssi">2</span><div>税务师：纳税调整识别 + 申报表生成 + 附表编制</div></div>
+              <div class="scn-step-item"><span class="ssi">3</span><div>风控官：调整事项复核 + 税收优惠核查 + 政策口径校验</div></div>
+              <div class="scn-step-item"><span class="ssi">4</span><div>分析师：年度税负分析 + 健康度评分 + 优化建议</div></div>
+              <div class="scn-step-item"><span class="ssi">5</span><div>税务师：电子税务局直报 + 退补税处理 + 归档</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Before/After Comparison -->
+    <div>
+      <div class="tx-label" style="color:var(--gr)"><span style="background:var(--gr)"></span>自动化前后效能对比</div>
+      <div class="compare-wrap">
+        <div class="compare-grid">
+          <!-- Header row -->
+          <div class="cg-cell cg-head metric">核心指标</div>
+          <div class="cg-cell cg-head before">传统人工模式</div>
+          <div class="cg-cell cg-head after">CrewOS 自动化</div>
+          <!-- Row 1 -->
+          <div class="cg-cell metric-cell"><span class="cg-label">月结周期</span></div>
+          <div class="cg-cell"><span class="cg-val before">5-7</span><span class="cg-unit">天</span></div>
+          <div class="cg-cell"><span class="cg-val after">1</span><span class="cg-unit">天</span></div>
+          <!-- Row 2 -->
+          <div class="cg-cell metric-cell"><span class="cg-label">纳税申报准备</span></div>
+          <div class="cg-cell"><span class="cg-val before">2-3</span><span class="cg-unit">天</span></div>
+          <div class="cg-cell"><span class="cg-val after">2</span><span class="cg-unit">小时</span></div>
+          <!-- Row 3 -->
+          <div class="cg-cell metric-cell"><span class="cg-label">发票处理速度</span></div>
+          <div class="cg-cell"><span class="cg-val before">5</span><span class="cg-unit">张/分钟</span></div>
+          <div class="cg-cell"><span class="cg-val after">200</span><span class="cg-unit">张/分钟</span></div>
+          <!-- Row 4 -->
+          <div class="cg-cell metric-cell"><span class="cg-label">凭证制单</span></div>
+          <div class="cg-cell"><span class="cg-label" style="color:var(--o)">手工录入</span></div>
+          <div class="cg-cell"><span class="cg-label" style="color:#7de0ba">自动生成</span></div>
+          <!-- Row 5 -->
+          <div class="cg-cell metric-cell"><span class="cg-label">税务风险发现</span></div>
+          <div class="cg-cell"><span class="cg-label" style="color:var(--o)">事后被动</span></div>
+          <div class="cg-cell"><span class="cg-label" style="color:#7de0ba">事前主动</span></div>
+          <!-- Row 6 -->
+          <div class="cg-cell metric-cell"><span class="cg-label">汇算清缴周期</span></div>
+          <div class="cg-cell"><span class="cg-val before">2-4</span><span class="cg-unit">周</span></div>
+          <div class="cg-cell"><span class="cg-val after">3-5</span><span class="cg-unit">天</span></div>
+          <!-- Row 7 -->
+          <div class="cg-cell metric-cell"><span class="cg-label">报表编制</span></div>
+          <div class="cg-cell"><span class="cg-label" style="color:var(--o)">手动编制易出错</span></div>
+          <div class="cg-cell"><span class="cg-label" style="color:#7de0ba">一键生成零差错</span></div>
+          <!-- Row 8 -->
+          <div class="cg-cell metric-cell"><span class="cg-label">政策更新响应</span></div>
+          <div class="cg-cell"><span class="cg-label" style="color:var(--o)">人工跟踪滞后</span></div>
+          <div class="cg-cell"><span class="cg-label" style="color:#7de0ba">实时推送自动适配</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <p class="para" style="margin-top:8px">财税 Agent 的核心价值不在于替代某个岗位，而在于<strong>把分散在出纳、会计、税务师、风控、分析师手中的碎片化工作，编排成一条端到端的自动化流水线</strong>。每个子角色专注自己的领域，但数据在角色间自动流转、无需人工搬运。<em>从"月末加班赶报表"到"系统自动出报表"，从"被动应对税务检查"到"主动识别风险提前消除"</em>——这是 CrewOS 财税能力带来的根本性转变。</p>
+  </div>
+</section>
+
+<!-- ═══ COMBOS ═══ -->
+<section class="sec fade">
+  <div class="sec-tag">组合的力量</div>
+  <h2>同样的 Agent，<br><em class="go">不同组合，完全不同的结果。</em></h2>
+  <p class="lead" style="margin-top:18px">就像同一批员工放在不同项目组里做的事完全不同。Agent 的真正威力不在于单个能力，而在于<strong>组合后涌现的化学反应</strong>。点击卡片查看每个组合的执行细节。</p>
+
+  <div class="combo-grid">
+    <div class="combo-card" onclick="this.classList.toggle('open')">
+      <div class="glow"></div>
+      <div class="cc-label">组合 A · 获客突击队</div>
+      <div class="cc-agents"><span class="cc-a b">📣 营销</span><span class="cc-plus">+</span><span class="cc-a gr">👥 CRM</span><span class="cc-plus">+</span><span class="cc-a g">💼 销售</span></div>
+      <div class="cc-title">30 天获客冲刺</div>
+      <div class="cc-result">营销生成内容 → CRM 自动分层 → 销售精准跟进。<b>同一线索池，转化率 ×3。</b></div>
+      <div class="cc-detail"><div class="cc-detail-inner">
+        <div class="step"><span class="si">1</span><div><b style="color:#8eb4f5">营销 Agent</b> 生成 12 条短视频脚本和投放计划，自动发布到各渠道</div></div>
+        <div class="step"><span class="si">2</span><div><b style="color:#7de0ba">CRM Agent</b> 接住线索，自动打标签、分意向、排跟进优先级</div></div>
+        <div class="step"><span class="si">3</span><div><b style="color:#e8c87a">销售 Agent</b> 为 Top 20 客户生成个性化报价和话术，提醒老板只跟关键单</div></div>
+      </div></div>
+      <div class="cc-toggle"><span class="arrow">▼</span> 点击展开执行细节</div>
+    </div>
+
+    <div class="combo-card" onclick="this.classList.toggle('open')">
+      <div class="glow"></div>
+      <div class="cc-label">组合 B · 风控守门员</div>
+      <div class="cc-agents"><span class="cc-a g">🧾 合同</span><span class="cc-plus">+</span><span class="cc-a p">💰 财税</span><span class="cc-plus">+</span><span class="cc-a o">⚖️ 法务</span></div>
+      <div class="cc-title">签前风控审查</div>
+      <div class="cc-result">合同扫描条款 → 财税测算利润率与税负 → 法务标记风险。<b>签约前拦截 90% 合规与税务隐患。</b></div>
+      <div class="cc-detail"><div class="cc-detail-inner">
+        <div class="step"><span class="si">1</span><div><b style="color:#e8c87a">合同 Agent</b> 逐条扫描合同，比对标准模板，标记异常条款</div></div>
+        <div class="step"><span class="si">2</span><div><b style="color:#c4a0f0">财税 Agent</b> 根据合同金额和付款条件，测算利润率、增值税税负、附加税，标记税负异常</div></div>
+        <div class="step"><span class="si">3</span><div><b style="color:#e89890">法务 Agent</b> 检查违约金、知识产权、管辖权等风险条款，生成修改建议</div></div>
+      </div></div>
+      <div class="cc-toggle"><span class="arrow">▼</span> 点击展开执行细节</div>
+    </div>
+
+    <div class="combo-card" onclick="this.classList.toggle('open')">
+      <div class="glow"></div>
+      <div class="cc-label">组合 C · 交付加速器</div>
+      <div class="cc-agents"><span class="cc-a c">📦 交付</span><span class="cc-plus">+</span><span class="cc-a b">👥 CRM</span><span class="cc-plus">+</span><span class="cc-a gr">📊 运营</span></div>
+      <div class="cc-title">项目自动交付</div>
+      <div class="cc-result">交付排期 → CRM 同步状态 → 运营出周报。<b>交付周期 ↓60%。</b></div>
+      <div class="cc-detail"><div class="cc-detail-inner">
+        <div class="step"><span class="si">1</span><div><b style="color:#8edce8">交付 Agent</b> 拆解项目为任务清单，自动排期，跟进每个节点</div></div>
+        <div class="step"><span class="si">2</span><div><b style="color:#8eb4f5">CRM Agent</b> 实时同步项目进度给客户，自动发送阶段确认通知</div></div>
+        <div class="step"><span class="si">3</span><div><b style="color:#7de0ba">运营 Agent</b> 汇总数据生成交付周报，标记延期风险</div></div>
+      </div></div>
+      <div class="cc-toggle"><span class="arrow">▼</span> 点击展开执行细节</div>
+    </div>
+
+    <div class="combo-card" onclick="this.classList.toggle('open')">
+      <div class="glow"></div>
+      <div class="cc-label">组合 D · 经营大脑</div>
+      <div class="cc-agents"><span class="cc-a p">💰 财税</span><span class="cc-plus">+</span><span class="cc-a b">📊 运营</span><span class="cc-plus">+</span><span class="cc-a g">📣 营销</span></div>
+      <div class="cc-title">每日经营复盘</div>
+      <div class="cc-result">财税出数据 → 运营做分析 → 营销调策略。<b>每天 8 点收到决策简报。</b></div>
+      <div class="cc-detail"><div class="cc-detail-inner">
+        <div class="step"><span class="si">1</span><div><b style="color:#c4a0f0">财税 Agent</b> 汇总昨日收入、成本、票据、现金流数据，输出税负率与利润率</div></div>
+        <div class="step"><span class="si">2</span><div><b style="color:#8eb4f5">运营 Agent</b> 对比目标，分析转化漏斗、客户质量、异常卡点</div></div>
+        <div class="step"><span class="si">3</span><div><b style="color:#e8c87a">营销 Agent</b> 根据复盘结果调整投放策略和内容方向</div></div>
+      </div></div>
+      <div class="cc-toggle"><span class="arrow">▼</span> 点击展开执行细节</div>
+    </div>
+  </div>
+
+  <div class="combo-formula">
+    <div class="cf-text">N 个 Agent × N 种技能 × N 种组合 = <span>∞ 种业务可能</span></div>
+  </div>
+</section>
+
+<!-- ═══ COMPOSER ═══ -->
+<section class="sec fade">
+  <div class="sec-tag">组合实验室</div>
+  <h2>拖一组 Agent，<br><em class="g">看看会发生什么。</em></h2>
+  <p class="lead" style="margin-top:18px">不同的 Agent 组合，会触发完全不同的协作链路。拖拽或点击试试看。</p>
+
+  <div class="composer">
+    <div class="cm-bar"><div class="dots"><i></i><i></i><i></i></div><span class="t">CrewOS · 组合实验室</span><span style="margin-left:auto;font-size:10px;color:#3ec04e">Live</span></div>
+    <div class="cm-body">
+      <div class="cm-left">
+        <div class="cm-quest"><div><small>主线任务</small><h3>把新产品卖到 30 万</h3></div><span class="badge">待组队</span></div>
+        <div class="cm-hint">🖐 拖拽 Agent 到右侧 — 也可以直接点击</div>
+        <div class="agent-pool" id="pool">
+          <span class="ap-item" draggable="true" data-id="mk">📣 营销</span>
+          <span class="ap-item" draggable="true" data-id="cr">👥 CRM</span>
+          <span class="ap-item" draggable="true" data-id="sa">💼 销售</span>
+          <span class="ap-item" draggable="true" data-id="co">🧾 合同</span>
+          <span class="ap-item" draggable="true" data-id="de">📦 交付</span>
+          <span class="ap-item" draggable="true" data-id="tx">💰 财税</span>
+          <span class="ap-item" draggable="true" data-id="op">📊 运营</span>
+        </div>
+      </div>
+      <div class="cm-right">
+        <div class="rl">我的团队</div>
+        <div class="drop-zone" id="dropzone">
+          <div class="empty"><b>👆</b>把 Agent 拖到这里</div>
+        </div>
+        <div class="cm-output" id="output">
+          <div class="wait">等待组队…</div>
+          <div class="ready"><small>协作方案</small><h4></h4><p></p><div class="chain"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ENGINES ═══ -->
+<section class="sec fade">
+  <div class="sec-tag">三大引擎</div>
+  <h2>三个引擎，<br><em class="b">驱动整个系统运转。</em></h2>
+  <p class="lead" style="margin-top:18px">SaaS 业务底座提供数据和流程，技能市场标准化能力，编排引擎串联一切。大模型作为所有 Agent 的底层推理引擎，驱动理解、规划、决策。点击展开每个引擎的技术细节。</p>
+
+  <div class="engines">
+    <div class="eng" onclick="this.classList.toggle('open')">
+      <div class="ei">🏢</div>
+      <h3>SaaS 业务底座</h3>
+      <p class="desc">不是空壳编排器。自带客户管理、合同管理、财税申报、协同审批等完整企业经营能力。</p>
+      <div class="feats"><div class="feat">客户、合同、票据、项目数据原生沉淀</div><div class="feat">权限、审批、留痕开箱即用</div><div class="feat">Agent 直接在业务数据上工作</div></div>
+      <div class="more">智能体不需要外部对接就能直接读写客户档案、合同台账、票据池、项目进度。所有业务数据在平台内原生沉淀，Agent 的每一次操作都有据可查、可追溯、可审计。这是 CrewOS 区别于纯编排工具的核心壁垒——AI 不漂浮在聊天框里，而是扎根在真实业务数据中。</div>
+      <div class="toggle"><span class="arr">▼</span> 点击展开</div>
+    </div>
+    <div class="eng" onclick="this.classList.toggle('open')">
+      <div class="ei">🧩</div>
+      <h3>技能市场</h3>
+      <p class="desc">能力像 App 一样被标准化封装，可复用、可组合、可分发。</p>
+      <div class="feats"><div class="feat">标准化封装与版本管理</div><div class="feat">跨 Agent、跨场景复用</div><div class="feat">支持第三方贡献</div></div>
+      <div class="more">每个技能独立封装，有标准输入输出接口。企业可以从市场挑选技能组合使用，也可以把内部最佳实践封装成技能发布给生态。技能版本可管理、可回滚、可追踪调用量。同一个"客户分层"技能，营销 Agent、销售 Agent、运营 Agent 都能调用，能力一次封装、处处复用。</div>
+      <div class="toggle"><span class="arr">▼</span> 点击展开</div>
+    </div>
+    <div class="eng" onclick="this.classList.toggle('open')">
+      <div class="ei">⚡</div>
+      <h3>多智能体编排引擎</h3>
+      <p class="desc">复杂业务被自动拆解为可执行的智能体流水线，大模型在背后驱动每个 Agent 的推理与决策。</p>
+      <div class="feats"><div class="feat">任务自动拆解与分配</div><div class="feat">全链路监控与告警</div><div class="feat">支持人工审批节点</div></div>
+      <div class="more">编排引擎接收目标后自动拆解为子任务，分配给合适的 Agent。大模型作为所有 Agent 的底层推理引擎，负责理解意图、规划步骤、生成方案——它不是独立角色，而是每个 Agent 背后的大脑。每个环节可追踪，异常自动告警，支持在任何节点插入人工审批，老板可以在关键决策点介入，其余全自动。</div>
+      <div class="toggle"><span class="arr">▼</span> 点击展开</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CHAT ═══ -->
+<section class="sec chat-section fade">
+  <div>
+    <div class="sec-tag">交互入口</div>
+    <h2>看起来是对话窗口，<br><em class="go">背后是一支军团在执行。</em></h2>
+    <p class="lead" style="margin-top:18px">老板只需要说一句话。系统自动拆解任务、组建团队、调度技能、执行流程、返回结果。<strong>对话只是入口，真正的力量在后面。</strong></p>
+    <div style="margin-top:20px">
+      <p class="para">用户在前端看到的是一个简洁的对话窗口。但每一条指令发出后，背后发生的事情远比"聊天"复杂：</p>
+      <p class="para"><strong>① 意图理解</strong>：编排引擎解析目标，判断需要哪些 Agent 参与</p>
+      <p class="para"><strong>② 任务拆解</strong>：自动拆分为子任务，分配给对应 Agent</p>
+      <p class="para"><strong>③ 技能调度</strong>：每个 Agent 调用所需 Skill 执行具体操作</p>
+      <p class="para"><strong>④ 数据读写</strong>：所有操作基于 SaaS 底座中的真实业务数据</p>
+      <p class="para"><strong>⑤ 结果聚合</strong>：汇总各 Agent 产出，生成结构化回复</p>
+      <p class="para"><strong>⑥ 留痕审计</strong>：全链路操作记录可追溯</p>
+    </div>
+  </div>
+  <div class="chat-mock">
+    <div class="ch-bar"><div class="dots"><i></i><i></i><i></i></div><span class="t">CrewOS · Workspace</span><span style="margin-left:auto;font-size:10px;color:#3ec04e">4 Agents Online</span></div>
+    <div class="ch-body">
+      <div class="msg user">帮我把新产品首月销售目标定到 30 万，并安排执行。</div>
+      <div class="msg bot">
+        收到。已自动组建执行团队，拆解为 5 个阶段：
+        <div class="agents"><span class="ap b">📣 营销</span><span class="ap g">👥 CRM</span><span class="ap gr">💼 销售</span><span class="ap p">🧾 合同</span></div>
+        <div class="res">① 营销 Agent：投放方案与内容日历<br>② CRM Agent：筛出 142 个高意向客户<br>③ 销售 Agent：为 Top 20 生成报价<br>④ 合同 Agent：预审 3 份条款风险<br>⑤ 预计首月 ¥312,000，利润率 34%</div>
+      </div>
+      <div class="msg user">合同风险具体是什么？</div>
+      <div class="msg bot">
+        合同 Agent 定位 3 处风险：付款条件偏长、违约金缺失、知识产权未明确。已生成修改建议。
+        <div class="res">📋 修改建议已准备好 → 点击查看</div>
+      </div>
+    </div>
+    <div class="ch-input"><div class="field">输入指令，或直接说目标…</div><div class="send">发送</div></div>
+  </div>
+</section>
+
+<!-- ═══ TECH MOAT ═══ -->
+<section class="sec fade">
+  <div>
+    <div class="sec-tag">技术壁垒</div>
+    <h2>每一层都建立在<br><em class="b">不可绕过的工程深度之上。</em></h2>
+    <p class="lead" style="margin-top:18px">CrewOS 的核心壁垒不在于接入了哪个大模型，而在于把 LLM 推理能力转化为<strong>可信赖的企业级 Agentic 执行系统</strong>所需的多层工程抽象。以下每一层都经历了持续迭代与真实业务验证，构成了系统性的技术纵深。</p>
+
+    <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <!-- moat card 1 -->
+      <div style="padding:24px;border-radius:14px;background:var(--s1);border:1px solid var(--br);position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--b);box-shadow:0 0 10px var(--b)"></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:38px;height:38px;border-radius:11px;background:var(--bl);display:grid;place-items:center;font-size:18px;color:var(--b)">🧠</div>
+          <h3 style="font-size:17px">Agentic 编排引擎</h3>
+        </div>
+        <p style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:12px">基于 ReAct + Plan-and-Execute 混合范式的多 Agent 编排，支持动态 DAG 拓扑重构、Agent 间异步消息传递、基于 LLM-as-Judge 的自适应重规划。集成循环看门狗（Loop Watchdog）防止无限递归与无界工具调用，通过补偿事务实现执行链路的状态回滚。</p>
+        <div style="display:grid;gap:5px">
+          <div style="font-size:12px;color:var(--t2);padding-left:14px;position:relative;line-height:1.5"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--b)"></span>ReAct + Plan-and-Execute 混合推理范式</div>
+          <div style="font-size:12px;color:var(--t2);padding-left:14px;position:relative;line-height:1.5"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--b)"></span>动态 DAG 拓扑与 LLM-as-Judge 自适应重规划</div>
+          <div style="font-size:12px;color:var(--t2);padding-left:14px;position:relative;line-height:1.5"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--b)"></span>循环看门狗与无界工具调用熔断</div>
+          <div style="font-size:12px;color:var(--t2);padding-left:14px;position:relative;line-height:1.5"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--b)"></span>Human-in-the-loop 阻塞式协调器与补偿事务回滚</div>
+        </div>
+      </div>
+
+      <!-- moat card 2 -->
+      <div style="padding:24px;border-radius:14px;background:var(--s1);border:1px solid var(--br);position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--g);box-shadow:0 0 10px var(--g)"></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:38px;height:38px;border-radius:11px;background:var(--gl);display:grid;place-items:center;font-size:18px;color:var(--g)">🏢</div>
+          <h3 style="font-size:17px">混合记忆与知识图谱</h3>
+        </div>
+        <p style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:12px">融合向量检索（Vector RAG）、图检索（Graph RAG）与情景记忆（Episodic Memory）的三层混合记忆架构。业务实体建模为领域知识图谱，支持跨会话的长程记忆持久化与基于时间衰减的记忆遗忘策略。多模态文档通过 VLM 解析为结构化实体注入图谱。</p>
+        <div style="display:grid;gap:5px">
+          <div style="font-size:12px;color:var(--t2);padding-left:14px;position:relative;line-height:1.5"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--g)"></span>Vector RAG + Graph RAG + Episodic Memory 三层混合</div>
+          <div style="font-size:12px;color:var(--t2);padding-left:14px;position:relative;line-height:1.5"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--g)"></span>跨会话长程记忆与时间衰减遗忘策略</div>
+          <div style="font-size:12px;color:var(--t2);padding-left:14px;position:relative;line-height:1.5"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--g)"></span>VLM 多模态文档解析与实体抽取</div>
+          <div style="font-size:12px;color:var(--t2);padding-left:14px;position:relative;line-height:1.5"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--g)"></span>领域知识图谱与业务规则引擎编码</div>
+        </div>
+      </div>
+
+      <!-- moat card 3 -->
+      <div style="padding:24px;border-radius:14px;background:var(--s1);border:1px solid var(--br);position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--p);box-shadow:0 0 10px var(--p)"></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:38px;height:38px;border-radius:11px;background:var(--pl);display:grid;place-items:center;font-size:18px;color:var(--p)">🧩</div>
+          <h3 style="font-size:17px">技能协议与可观测性</h3>
+        </div>
+        <p style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:12px">基于 JSON Schema 的结构化输出契约与 Function Calling 工具调用规范，支持 Pydantic 级别的运行时类型校验。全链路集成 OpenTelemetry 分布式追踪，每个 Agent 的 Token 消耗、工具调用延迟、推理质量通过 LLM-as-Judge 自动评估，形成闭环的 Agent 评估与回归测试体系。</p>
+        <div style="display:grid;gap:5px">
+          <div style="font-size:12px;color:var(--t2);padding-left:14px;position:relative;line-height:1.5"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--p)"></span>JSON Schema 结构化输出与 Function Calling 契约</div>
+          <div style="font-size:12px;color:var(--t2);padding-left:14px;position:relative;line-height:1.5"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--p)"></span>OpenTelemetry 分布式追踪与 Token 级别成本归因</div>
+          <div style="font-size:12px;color:var(--t2);padding-left:14px;position:relative;line-height:1.5"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--p)"></span>LLM-as-Judge 自动评估与回归测试管线</div>
+          <div style="font-size:12px;color:var(--t2);padding-left:14px;position:relative;line-height:1.5"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--p)"></span>技能语义版本管理与灰度发布策略</div>
+        </div>
+      </div>
+
+      <!-- moat card 4 -->
+      <div style="padding:24px;border-radius:14px;background:var(--s1);border:1px solid var(--br);position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--gr);box-shadow:0 0 10px var(--gr)"></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:38px;height:38px;border-radius:11px;background:var(--grl);display:grid;place-items:center;font-size:18px;color:var(--gr)">🔌</div>
+          <h3 style="font-size:17px">MCP 协议与安全治理</h3>
+        </div>
+        <p style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:12px">基于 MCP 最新规范的标准化工具暴露层，支持流式传输与双向通信。安全侧采用分层 Guardrails 架构：输入层的 Prompt Injection 检测、工具调用层的参数校验与权限校验、输出层的内容安全过滤。零信任网络架构下实现端到端加密与最小权限原则。</p>
+        <div style="display:grid;gap:5px">
+          <div style="font-size:12px;color:var(--t2);padding-left:14px;position:relative;line-height:1.5"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--gr)"></span>MCP 标准协议与流式双向通信</div>
+          <div style="font-size:12px;color:var(--t2);padding-left:14px;position:relative;line-height:1.5"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--gr)"></span>分层 Guardrails：Prompt Injection 检测 + 工具调用校验 + 输出过滤</div>
+          <div style="font-size:12px;color:var(--t2);padding-left:14px;position:relative;line-height:1.5"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--gr)"></span>零信任架构与最小权限工具调用</div>
+          <div style="font-size:12px;color:var(--t2);padding-left:14px;position:relative;line-height:1.5"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--gr)"></span>全链路审计日志与可追溯执行轨迹</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- timeline -->
+    <div style="margin-top:24px;padding:24px;border-radius:14px;background:linear-gradient(135deg,rgba(77,130,224,.05),rgba(160,107,232,.05));border:1px solid var(--br2)">
+      <div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px">系统演进路径 — 每一层都需要持续的工程投入与业务验证</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        <div>
+          <div style="font-size:11px;color:var(--g);font-weight:700;letter-spacing:.06em;margin-bottom:6px">Phase I</div>
+          <b style="font-size:14px;display:block;margin-bottom:4px">领域知识图谱</b>
+          <span style="font-size:12px;color:var(--t2);line-height:1.45">长期企业服务实践沉淀的业务实体建模与行业 know-how 编码</span>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--g);font-weight:700;letter-spacing:.06em;margin-bottom:6px">Phase II</div>
+          <b style="font-size:14px;display:block;margin-bottom:4px">技能协议层</b>
+          <span style="font-size:12px;color:var(--t2);line-height:1.45">业务能力抽象为标准化 Function Calling 契约，验证组合编排</span>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--g);font-weight:700;letter-spacing:.06em;margin-bottom:6px">Phase III</div>
+          <b style="font-size:14px;display:block;margin-bottom:4px">Agentic 编排</b>
+          <span style="font-size:12px;color:var(--t2);line-height:1.45">在真实业务中打磨 ReAct 推理、动态重规划、Guardrails 与补偿事务</span>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--g);font-weight:700;letter-spacing:.06em;margin-bottom:6px">Phase IV</div>
+          <b style="font-size:14px;display:block;margin-bottom:4px">可观测生态</b>
+          <span style="font-size:12px;color:var(--t2);line-height:1.45">OpenTelemetry 全链路追踪、LLM-as-Judge 评估闭环、MCP 开放接入</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="para" style="margin-top:20px">上述四层并非独立模块的简单堆叠，而是构成了一个<strong>深度耦合的 Agentic 工程闭环</strong>：混合记忆架构为编排引擎提供长程上下文感知，技能协议层为编排提供标准化的 Function Calling 执行单元，MCP 与分层 Guardrails 为整个系统提供安全可控的外部交互边界。每一层的建设都需要对应的领域知识积累、前沿 AI 工程能力和真实业务场景的持续验证，<em>这种多层联动的技术纵深本身就是最坚实的壁垒</em>。</p>
+  </div>
+</section>
+
+<!-- ═══ VERTICAL COUPLING & DATA GRAVITY ═══ -->
+<section class="sec fade">
+  <div>
+    <div class="sec-tag">垂直深度耦合与数据引力</div>
+    <h2>不是横向铺功能，<br><em class="go">是纵向钻进业务最深处的锚点。</em></h2>
+    <p class="lead" style="margin-top:18px">大多数 AI 平台在横向铺场景——营销、HR、客服各做一个浅层入口。CrewOS反其道而行：<strong>在每个垂直领域钻到最深，把行业 know-how、业务规则、合规逻辑编码进系统</strong>，形成不可替代的深度耦合。而深度耦合产生的数据沉淀，又形成持续增强的数据引力——数据越多，Agent 越准，系统越不可替代。</p>
+
+    <!-- 深度耦合可视化 -->
+    <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <!-- 左：垂直深度耦合 -->
+      <div style="padding:24px;border-radius:14px;background:var(--s1);border:1px solid var(--br);position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--g);box-shadow:0 0 10px var(--g)"></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <div style="width:38px;height:38px;border-radius:11px;background:var(--gl);display:grid;place-items:center;font-size:18px;color:var(--g)">🔨</div>
+          <h3 style="font-size:17px">垂直场景深度耦合</h3>
+        </div>
+        <p style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:16px">每个垂直场景不是浅层调用 LLM 生成文本，而是把该领域的<strong style="color:var(--t1)">业务规则、合规逻辑、行业 know-how、数据模型、操作流程</strong>全部编码进系统。Agent 的每一步操作都基于深度领域模型，而非泛化推理。</p>
+        <div style="display:grid;gap:8px">
+          <div style="padding:12px 14px;background:var(--s2);border:1px solid var(--br2);border-radius:9px">
+            <b style="font-size:13px;color:var(--g);display:block;margin-bottom:4px">财税场景耦合深度</b>
+            <span style="font-size:11px;color:var(--t2);line-height:1.5;display:block">8 大税种的计算规则、申报逻辑、优惠政策匹配、金税四期合规口径、汇算清缴纳税调整事项——全部编码为可执行的业务规则引擎，而非靠 LLM 自由发挥</span>
+          </div>
+          <div style="padding:12px 14px;background:var(--s2);border:1px solid var(--br2);border-radius:9px">
+            <b style="font-size:13px;color:#8eb4f5;display:block;margin-bottom:4px">合同场景耦合深度</b>
+            <span style="font-size:11px;color:var(--t2);line-height:1.5;display:block">合同条款分类体系、风险识别规则、标准条款库、履约节点逻辑、违约金计算——领域知识图谱覆盖合同全生命周期</span>
+          </div>
+          <div style="padding:12px 14px;background:var(--s2);border:1px solid var(--br2);border-radius:9px">
+            <b style="font-size:13px;color:#7de0ba;display:block;margin-bottom:4px">CRM 场景耦合深度</b>
+            <span style="font-size:11px;color:var(--t2);line-height:1.5;display:block">客户分层模型、意向评分算法、生命周期阶段定义、跟进节奏策略、转交规则——不是简单打标签，而是完整的客户运营方法论</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右：数据引力 -->
+      <div style="padding:24px;border-radius:14px;background:var(--s1);border:1px solid var(--br);position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--p);box-shadow:0 0 10px var(--p)"></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <div style="width:38px;height:38px;border-radius:11px;background:var(--pl);display:grid;place-items:center;font-size:18px;color:var(--p)">🌀</div>
+          <h3 style="font-size:17px">数据引力效应</h3>
+        </div>
+        <p style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:16px">垂直深度耦合产生的业务数据持续沉淀在平台内，形成<strong style="color:var(--t1)">数据引力</strong>——数据越多 → Agent 推理质量越高 → 依赖越深 → 更多数据流入。这是一个正向飞轮，时间越长壁垒越厚。</p>
+        <div style="display:grid;gap:10px">
+          <!-- 引力飞轮 -->
+          <div style="padding:16px;background:var(--s2);border:1px solid var(--br2);border-radius:10px">
+            <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">数据引力飞轮</div>
+            <div style="display:grid;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--t2)">
+                <span style="width:22px;height:22px;border-radius:6px;background:var(--pl);color:var(--p);display:grid;place-items:center;font-size:10px;font-weight:700;flex-shrink:0">1</span>
+                <span>业务数据原生沉淀（客户、合同、票据、项目）</span>
+              </div>
+              <div style="text-align:center;font-size:14px;color:var(--t3)">↓</div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--t2)">
+                <span style="width:22px;height:22px;border-radius:6px;background:var(--pl);color:var(--p);display:grid;place-items:center;font-size:10px;font-weight:700;flex-shrink:0">2</span>
+                <span>Agent 在真实数据上训练与校准，推理质量提升</span>
+              </div>
+              <div style="text-align:center;font-size:14px;color:var(--t3)">↓</div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--t2)">
+                <span style="width:22px;height:22px;border-radius:6px;background:var(--pl);color:var(--p);display:grid;place-items:center;font-size:10px;font-weight:700;flex-shrink:0">3</span>
+                <span>企业依赖加深，迁移成本指数级上升</span>
+              </div>
+              <div style="text-align:center;font-size:14px;color:var(--t3)">↓</div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--t2)">
+                <span style="width:22px;height:22px;border-radius:6px;background:var(--pl);color:var(--p);display:grid;place-items:center;font-size:10px;font-weight:700;flex-shrink:0">4</span>
+                <span>更多业务环节接入，更多数据流入平台</span>
+              </div>
+              <div style="text-align:center;font-size:14px;color:var(--p)">↻ 循环增强</div>
+            </div>
+          </div>
+          <!-- 引力指标 -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="padding:12px;background:var(--s2);border:1px solid var(--br2);border-radius:8px">
+              <strong style="font-size:20px;color:var(--p);display:block;line-height:1">7层</strong>
+              <span style="font-size:10px;color:var(--t3);display:block;margin-top:4px">业务数据原生沉淀层级</span>
+            </div>
+            <div style="padding:12px;background:var(--s2);border:1px solid var(--br2);border-radius:8px">
+              <strong style="font-size:20px;color:var(--p);display:block;line-height:1">↑↑</strong>
+              <span style="font-size:10px;color:var(--t3);display:block;margin-top:4px">数据越多，迁移成本越高</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 深度耦合矩阵 -->
+    <div style="margin-top:20px;padding:24px;border-radius:14px;background:var(--s1);border:1px solid var(--br);overflow:hidden">
+      <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px">耦合深度矩阵 — 从浅层调用到深度编码</div>
+      <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:1px;background:var(--br);border-radius:10px;overflow:hidden">
+        <div style="padding:10px 14px;background:var(--s3);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3)">维度</div>
+        <div style="padding:10px 14px;background:var(--s3);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--o)">通用 AI 平台</div>
+        <div style="padding:10px 14px;background:var(--s3);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#7de0ba">CrewOS</div>
+
+        <div style="padding:10px 14px;background:var(--s2);font-size:12px;font-weight:600;color:var(--t1)">业务规则</div>
+        <div style="padding:10px 14px;background:var(--s2);font-size:12px;color:var(--t3)">靠 Prompt 描述，每次推理可能不同</div>
+        <div style="padding:10px 14px;background:var(--s2);font-size:12px;color:#7de0ba">业务规则引擎编码，确定性执行</div>
+
+        <div style="padding:10px 14px;background:var(--s2);font-size:12px;font-weight:600;color:var(--t1)">数据模型</div>
+        <div style="padding:10px 14px;background:var(--s2);font-size:12px;color:var(--t3)">无原生数据模型，依赖外部对接</div>
+        <div style="padding:10px 14px;background:var(--s2);font-size:12px;color:#7de0ba">全链路业务实体原生建模</div>
+
+        <div style="padding:10px 14px;background:var(--s2);font-size:12px;font-weight:600;color:var(--t1)">合规逻辑</div>
+        <div style="padding:10px 14px;background:var(--s2);font-size:12px;color:var(--t3)">LLM 自由推理，合规不可控</div>
+        <div style="padding:10px 14px;background:var(--s2);font-size:12px;color:#7de0ba">金税四期口径、税法规则硬编码</div>
+
+        <div style="padding:10px 14px;background:var(--s2);font-size:12px;font-weight:600;color:var(--t1)">数据沉淀</div>
+        <div style="padding:10px 14px;background:var(--s2);font-size:12px;color:var(--t3)">用完即走，无数据积累</div>
+        <div style="padding:10px 14px;background:var(--s2);font-size:12px;color:#7de0ba">原生沉淀，数据引力持续增强</div>
+
+        <div style="padding:10px 14px;background:var(--s2);font-size:12px;font-weight:600;color:var(--t1)">迁移成本</div>
+        <div style="padding:10px 14px;background:var(--s2);font-size:12px;color:var(--t3)">低，随时可换</div>
+        <div style="padding:10px 14px;background:var(--s2);font-size:12px;color:#7de0ba">指数级上升，时间越长越不可替代</div>
+      </div>
+    </div>
+
+    <p class="para" style="margin-top:20px">垂直深度耦合和数据引力是同一枚硬币的两面：<strong>耦合越深，数据沉淀越厚；数据越厚，引力越强；引力越强，系统越不可替代</strong>。这不是功能列表上的优势，而是<em>结构性壁垒</em>——它随着时间持续增强，而非随着时间被追赶稀释。</p>
+  </div>
+</section>
+
+<!-- ═══ END ═══ -->
+<!-- ═══ END ═══ -->
+<section class="end-sec fade">
+  <div class="end-inner">
+    <div class="sec-tag center">CrewOS</div>
+    <h2>不是 AI 聊天，<br><em class="go">是智能体协作操作系统。</em></h2>
+    <p>把模型、技能、SaaS 业务、数据、流程统一到一个可编排的平台。让每个企业都能像搭乐高一样，组装自己的智能体军团。</p>
+    <div class="end-tags">
+      <span>SaaS 业务底座</span><span>技能市场</span><span>多智能体编排</span><span>MCP 协议</span>
+    </div>
+  </div>
+</section>
+
+</main>
+<script>
+/* ── Drag & Drop Composer ── */
+(function(){
+  const pool=document.getElementById('pool');
+  const zone=document.getElementById('dropzone');
+  const outWait=document.querySelector('#output .wait');
+  const outReady=document.querySelector('#output .ready');
+  const outH4=outReady.querySelector('h4');
+  const outP=outReady.querySelector('p');
+  const outChain=outReady.querySelector('.chain');
+  const team=new Set();
+  const info={
+    mk:{emoji:'📣',name:'营销'},cr:{emoji:'👥',name:'CRM'},
+    sa:{emoji:'💼',name:'销售'},co:{emoji:'🧾',name:'合同'},
+    de:{emoji:'📦',name:'交付'},tx:{emoji:'💰',name:'财税'},
+    op:{emoji:'📊',name:'运营'}
+  };
+  const combos={
+    'mk,cr':{title:'获客冲刺',desc:'营销生成内容，CRM 自动分层。精准触达，转化率提升。',chain:['营销','CRM']},
+    'mk,cr,sa':{title:'获客突击队',desc:'营销获客 → CRM 分层 → 销售跟进。完整获客到转化链路，转化率 ×3。',chain:['营销','CRM','销售']},
+    'mk,cr,sa,co':{title:'签约流水线',desc:'从获客到签约全自动，一周内完成首批签约。',chain:['营销','CRM','销售','合同']},
+    'mk,cr,sa,co,tx':{title:'经营全闭环',desc:'从获客到回款，完整经营闭环自动运转。',chain:['营销','CRM','销售','合同','财税']},
+    'co,tx':{title:'风控守门员',desc:'合同审条款，财税算利润。签约前拦截 90% 合规隐患。',chain:['合同','财税']},
+    'de,cr':{title:'交付同步器',desc:'交付排期，CRM 同步状态。客户随时知道进度。',chain:['交付','CRM']},
+    'de,cr,op':{title:'交付加速器',desc:'交付周期缩短 60%，自动生成周报。',chain:['交付','CRM','运营']},
+    'tx,op':{title:'经营看板',desc:'实时经营看板，数据驱动决策。',chain:['财税','运营']},
+    'tx,op,mk':{title:'经营大脑',desc:'每天 8 点，老板收到一份经营决策简报。',chain:['财税','运营','营销']},
+    'mk,op':{title:'内容引擎',desc:'内容投放自动优化，ROI 持续提升。',chain:['营销','运营']},
+    'sa,co':{title:'签约加速器',desc:'签约流程从 3 天缩短到半天。',chain:['销售','合同']},
+    'cr,sa,co,de,tx':{title:'全链路经营',desc:'从客户到回款，五段全自动。',chain:['CRM','销售','合同','交付','财税']},
+    'mk,cr,sa,co,de,tx,op':{title:'完整数字公司',desc:'7 个 Agent 完整协作，全部经营链路自动运转。',chain:['营销','CRM','销售','合同','交付','财税','运营']},
+    'co,de':{title:'履约保障',desc:'合同签完，交付自动接管，确保按约执行。',chain:['合同','交付']},
+    'tx,de':{title:'成本管控',desc:'交付进度同步财税，实时核算项目成本与利润。',chain:['财税','交付']},
+    'mk,sa':{title:'精准营销',desc:'营销做内容，销售做转化，端到端获客。',chain:['营销','销售']},
+    'cr,op':{title:'客户运营',desc:'CRM 分层，运营做留存，提升客户生命周期价值。',chain:['CRM','运营']}
+  };
+  function calc(){
+    const arr=Array.from(team).sort();
+    if(arr.length===0) return null;
+    const key=arr.join(',');
+    const c=combos[key];
+    if(c) return c;
+    const names=arr.map(id=>info[id].name);
+    return {title:'自定义组合',desc:names.join('、')+' 协同工作，自动分工推进。',chain:names};
+  }
+  function refresh(){
+    if(team.size===0){outWait.style.display='block';outReady.classList.remove('show');}
+    else{
+      outWait.style.display='none';outReady.classList.add('show');
+      const c=calc();outH4.textContent=c.title;outP.textContent=c.desc;
+      outChain.innerHTML=c.chain.map((n,i)=>'<span>'+n+'</span>'+(i<c.chain.length-1?'<span class="arr">→</span>':'')).join(' ');
+    }
+  }
+  function add(id){
+    if(team.has(id))return;team.add(id);
+    pool.querySelector('[data-id="'+id+'"]').classList.add('used');
+    const tag=document.createElement('span');tag.className='dz-tag';
+    tag.textContent=info[id].emoji+' '+info[id].name;tag.dataset.id=id;
+    const x=document.createElement('span');x.className='x';x.textContent='×';
+    x.addEventListener('click',()=>remove(id));tag.appendChild(x);zone.appendChild(tag);
+    const e=zone.querySelector('.empty');if(e)e.remove();refresh();
+  }
+  function remove(id){
+    team.delete(id);
+    pool.querySelector('[data-id="'+id+'"]').classList.remove('used');
+    const t=zone.querySelector('[data-id="'+id+'"]');if(t)t.remove();
+    if(team.size===0){const e=document.createElement('div');e.className='empty';e.innerHTML='<b>👆</b>把 Agent 拖到这里';zone.appendChild(e);}
+    refresh();
+  }
+  pool.querySelectorAll('.ap-item').forEach(item=>{
+    item.addEventListener('dragstart',e=>{if(item.classList.contains('used')){e.preventDefault();return;}e.dataTransfer.setData('text/plain',item.dataset.id);e.dataTransfer.effectAllowed='move';item.style.opacity='.4';});
+    item.addEventListener('dragend',()=>{item.style.opacity='';});
+  });
+  zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('over');});
+  zone.addEventListener('dragleave',()=>zone.classList.remove('over'));
+  zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('over');const id=e.dataTransfer.getData('text/plain');if(id&&!team.has(id))add(id);});
+  pool.addEventListener('click',e=>{const item=e.target.closest('.ap-item');if(!item)return;const id=item.dataset.id;if(team.has(id))remove(id);else add(id);});
+})();
+
+// Stagger role sub-items
+document.querySelectorAll('.rc-subs').forEach(s=>{
+  s.querySelectorAll('.rc-sub').forEach((el,i)=>el.style.setProperty('--i',i));
+});
+// Animate role cards on scroll
+const roleObserver=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.style.opacity='1';
+      e.target.style.transform='none';
+      const subs=e.target.querySelectorAll('.rc-sub');
+      subs.forEach((s,i)=>{
+        s.style.opacity='0';
+        s.style.transform='translateX(-8px)';
+        setTimeout(()=>{
+          s.style.transition='opacity .35s ease,transform .35s ease';
+          s.style.opacity='1';
+          s.style.transform='none';
+        },i*60+100);
+      });
+      roleObserver.unobserve(e.target);
+    }
+  });
+},{threshold:.15});
+document.querySelectorAll('.role-card').forEach((c,i)=>{
+  c.style.opacity='0';
+  c.style.transform='translateY(14px)';
+  c.style.transition='opacity .5s ease,transform .5s ease';
+  c.style.transitionDelay=(i*.06)+'s';
+  roleObserver.observe(c);
+});
+
+const ob=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')})},{threshold:.08});
+document.querySelectorAll('.fade').forEach(el=>ob.observe(el));
+</script>
+</body>
+</html>
