@@ -1,160 +1,464 @@
-# XW-Agent+Saas
+# CrewOS+Saas
 我是一个创业即将失败的产品研发负责人，想再这里上传一些我对产品的一些想法给大家参考，希望大家可以提出建议，如果有更好的想法也可以一起来聊一聊
-# CrewOS
+ # CrewOS
 
-> **不是给企业一个更聪明的聊天框，而是给企业一支真正会工作的 AI 团队。**
+> **The next unit of AI is not the task. It's the business.**
 
-CrewOS 是一个面向企业的 **AI Workforce / Agent OS**。
+**CrewOS is a Business Runtime for AI-operated businesses.**
 
-它希望解决的不是：
+我们正在探索一个问题：
 
-> “AI 能不能回答我的问题？”
+> **当 AI 已经能够完成任务之后，下一步是什么？**
+
+我们的答案是：
+
+> **让 AI 开始持续运行一项业务。**
+
+---
+
+## The Shift
+
+过去几十年：
+
+```text
+Human
+  ↓
+Software
+  ↓
+Business
+```
+
+人使用 ERP、CRM、财务软件、OA……
+
+软件帮助人完成业务。
+
+后来：
+
+```text
+Human
+  ↓
+AI Assistant
+  ↓
+Answer
+```
+
+人开始向 AI 提问。
+
+再后来：
+
+```text
+Human
+  ↓
+AI Agent
+  ↓
+Task
+  ↓
+Result
+```
+
+人开始把任务交给 AI。
+
+我们认为，下一步应该是：
+
+```text
+Human
+  ↓
+AI
+  ↓
+Business
+```
+
+不是：
+
+> “帮我完成这个任务。”
 
 而是：
 
-> **“AI 能不能真正进入我的业务，理解目标、调用系统、协同工作，并把事情做完？”**
+> **“这项业务，从现在开始由你负责。”**
+
+这就是 CrewOS。
 
 ---
 
-# 1. 为什么要做CrewOS？
+# Why CrewOS?
 
-过去的软件，是企业员工使用的工具。
+通用模型正在变得越来越强。
 
-员工登录 ERP、CRM、财务系统、邮箱、OA……
+它们可以：
 
-然后：
+* 理解自然语言
+* 推理
+* 写作
+* 分析
+* 编程
+* 使用工具
+* 调用 API
+
+通用 Agent 进一步解决了：
+
+> **给 AI 一个任务，让它自己规划并完成。**
+
+这已经是巨大的变化。
+
+但企业真正运行的，并不是一个个孤立的 Task。
+
+企业运行的是：
 
 ```text
-人 → 操作软件 → 产生结果
+Business
+│
+├── Goals
+├── Data
+├── State
+├── Rules
+├── Tasks
+├── Events
+├── Exceptions
+├── Decisions
+├── People
+└── Deadlines
 ```
 
-AI 出现以后，很多产品变成了：
+而且：
+
+> **Business 没有真正的 End。**
+
+今天完成月结，明天进入新的业务周期。
+
+今天跟进一个客户，明天还会产生新的客户。
+
+今天完成报税，下个月仍然需要继续。
+
+所以我们想解决的问题不是：
+
+> **Can AI complete a task?**
+
+而是：
+
+> **Can AI continuously operate a business?**
+
+---
+
+# From Task to Business
+
+一个通用 AI Agent：
 
 ```text
-人 → 问 AI → AI 回答
+Prompt
+  ↓
+Planning
+  ↓
+Tool Calling
+  ↓
+Execution
+  ↓
+Result
 ```
-
-但这仍然没有改变一个核心事实：
-
-> **人依然需要自己完成工作。**
-
-CrewOS 希望改变的是这一层。
-
-```text
-过去：
-
-人
- ↓
-软件
- ↓
-人完成工作
-
 
 CrewOS：
-人
- ↓
-AI Agent
- ↓
-理解目标
- ↓
-拆解任务
- ↓
-调用工具
- ↓
-协同其他 Agent
- ↓
-执行工作
- ↓
-发现异常
- ↓
-请求人工确认
- ↓
-完成任务
-```
-
-**软件不再只是工具，而开始成为企业中的“数字员工”。**
-
----
-
-# 2. 我们想构建什么？
-
-CrewOS 的核心概念不是一个 Agent。
-
-而是一套能够让：
-
-> **Agent 成为员工，Skill 成为能力，Tool 成为工作工具，Memory 成为工作记忆，Workflow 成为业务流程，Permission 成为企业边界。**
-
-最终让多个 Agent 组成真正的 **AI Workforce**。
 
 ```text
-                         CrewOS
-                            │
-              ┌─────────────┴─────────────┐
-              │                           │
-          AI Employee                 AI Crew
-              │                           │
-       ┌──────┼──────┐             ┌──────┼──────┐
-       │      │      │             │      │      │
-      Agent  Agent  Agent         财税   销售   运营
-                                  Team   Team   Team
+Business Outcome
+       ↓
+Business State
+       ↓
+AI Crew
+       ↓
+Planning
+       ↓
+Execution
+       ↓
+Observation
+       ↓
+State Update
+       ↓
+Continue
 ```
+
+区别不是 Agent 是否更聪明。
+
+而是：
+
+> **AI 的工作对象发生了变化。**
+
+从：
+
+**Task**
+
+变成：
+
+**Business**
 
 ---
 
-# 3. 从一个 Agent，到一支 AI 团队
+# General Models → Agents → CrewOS
 
-一个 Agent 负责一类工作。
+我们并不试图与基础模型竞争。
+
+也不试图成为另一个通用 AI Agent。
+
+我们认为三者解决的是不同的问题：
+
+```text
+┌─────────────────────────────┐
+│      Foundation Model       │
+│                             │
+│         Intelligence        │
+└──────────────┬──────────────┘
+               ↓
+┌─────────────────────────────┐
+│       General AI Agent      │
+│                             │
+│       Task Execution        │
+└──────────────┬──────────────┘
+               ↓
+┌─────────────────────────────┐
+│          CrewOS             │
+│                             │
+│      Business Operation     │
+└─────────────────────────────┘
+```
+
+**Model provides intelligence.**
+
+**Agent provides execution.**
+
+**CrewOS provides continuity.**
+
+---
+
+# Why not just another Work Assistant?
+
+今天已经出现了越来越成熟的通用 Agent 产品。
+
+例如 WorkBuddy 这一类产品，已经可以让用户：
+
+* 用自然语言描述任务
+* 自动规划
+* 调用工具
+* 使用 Skills / MCP
+* 操作企业软件
+* 执行多步骤工作
+* 生成最终结果
+
+这条路径是成立的。
+
+它解决的是：
+
+> **“把工作交给 AI。”**
+
+CrewOS 想继续向前一步：
+
+> **“把业务交给 AI。”**
+
+因此：
+
+```text
+General AI Agent
+
+“帮我完成这个任务。”
+        ↓
+       Result
+
+
+CrewOS
+
+“从现在开始，这项业务你负责。”
+        ↓
+      Business
+        ↓
+   Continuous Operation
+```
+
+我们不是要做一个更强的 WorkBuddy。
+
+我们想探索一个不同的产品抽象。
+
+---
+
+# Business is not a Task
+
+一个 Prompt 可以结束。
+
+一个 Task 可以结束。
+
+一个 Business 不会。
 
 例如：
 
-* AI 出纳
-* AI 会计
-* AI 税务师
-* AI 销售
-* AI 客服
-* AI 运营
-* AI 合同助手
-* AI 数据分析师
-
-但真正复杂的企业工作，很少由一个岗位独立完成。
-
-因此 CrewOS 更关注：
-
 ```text
-Agent
-  ↓
-多个 Agent
-  ↓
-Agent Crew
-  ↓
-业务流程
-  ↓
-企业 Workforce
+“分析 8 月财务数据”
 ```
 
-Agent 之间可以共享：
+这是 Task。
 
-* Context
-* Memory
-* Skills
-* Tools
-* Business Data
-* Task State
-* Permission
+而：
 
-从而共同完成一个业务目标。
+```text
+“负责公司的财税业务”
+```
+
+这是 Business Responsibility。
+
+前者要求 AI 给出一个结果。
+
+后者要求 AI：
+
+* 记住过去
+* 理解现在
+* 追踪状态
+* 处理新事件
+* 推进任务
+* 发现异常
+* 请求决策
+* 更新状态
+* 进入下一周期
+
+这就是 CrewOS 要解决的连续性问题。
 
 ---
 
-# 4. 为什么先从财税开始？
+# Business Runtime
 
-财税是我们用来验证 XW-Agent 的第一个重要业务场景。
+CrewOS 的核心不是 Chat。
 
-原因很简单：
+也不是 Agent Marketplace。
 
-**财税不是一个问题，而是一条持续运行的业务链。**
+甚至不是 Workflow Builder。
 
-例如一个企业每个月都需要经历：
+核心是：
+
+> **Business Runtime**
+
+它负责让 AI 在一个长期存在的 Business Context 中持续工作。
+
+```text
+                  Business Runtime
+
+       ┌─────────────────────────────┐
+       │       Business State        │
+       └──────────────┬──────────────┘
+                      ↓
+       ┌─────────────────────────────┐
+       │     Events / Scheduler      │
+       └──────────────┬──────────────┘
+                      ↓
+       ┌─────────────────────────────┐
+       │      Planning / Tasks       │
+       └──────────────┬──────────────┘
+                      ↓
+       ┌─────────────────────────────┐
+       │          AI Crew            │
+       └──────────────┬──────────────┘
+                      ↓
+       ┌─────────────────────────────┐
+       │ Tools / MCP / Enterprise    │
+       └──────────────┬──────────────┘
+                      ↓
+       ┌─────────────────────────────┐
+       │      Human Approval         │
+       └──────────────┬──────────────┘
+                      ↓
+                State Update
+                      ↓
+                  Continue
+```
+
+---
+
+# Business State
+
+如果 AI 要长期负责一项业务，它必须知道：
+
+> **业务现在是什么状态。**
+
+例如：
+
+```text
+Finance Business
+────────────────────────────
+
+Period              Sep 2026
+Closing Progress       73%
+
+Invoices             2,831
+Bank Transactions    6,421
+
+Unmatched                3
+Tax Risks                 4
+Pending Approvals        2
+
+Next Deadline
+September 15
+```
+
+每一次 AI 行动都会改变 Business State。
+
+新的事件也会改变 Business State。
+
+因此：
+
+> **Business State 是 AI 长期工作的基础。**
+
+---
+
+# AI Crew
+
+CrewOS 中的 Crew 不是简单的 Agent 集合。
+
+它是：
+
+> **围绕一个 Business Outcome 持续工作的 AI Team。**
+
+例如：
+
+```text
+                 Finance Crew
+                      │
+       ┌──────────────┼──────────────┐
+       │              │              │
+     Finance         Tax           Risk
+       │              │              │
+     Accounting     Filing        Analysis
+       │              │              │
+       └──────────────┼──────────────┘
+                      ↓
+                 Business Outcome
+```
+
+Agent 是执行者。
+
+Crew 是组织。
+
+Business 是上下文。
+
+Outcome 是目标。
+
+Runtime 负责让它持续运行。
+
+---
+
+# Finance is our first experiment
+
+我们选择财税作为第一个 Business，不是因为我们想做一个财务软件。
+
+而是因为：
+
+> **财税是一个非常真实的长期业务系统。**
+
+它拥有：
+
+* 高频数据
+* 多个业务角色
+* 多个外部系统
+* 明确的周期
+* 大量规则
+* 大量异常
+* 高风险操作
+* 人工审批
+* 审计要求
+
+例如：
 
 ```text
 票据采集
@@ -165,591 +469,191 @@ Agent 之间可以共享：
    ↓
 账务处理
    ↓
-报表编制
+报表
    ↓
 税务计算
    ↓
-纳税申报
+风险检查
    ↓
-缴款确认
+人工确认
+   ↓
+申报
    ↓
 归档
-```
-
-传统软件可以帮助人完成其中的某些步骤。
-
-但整个流程仍然需要：
-
-> 人去检查、判断、操作、衔接。
-
-XW-Agent 想做的是：
-
-> **让一支 AI 财税团队主动运行整个流程。**
-
----
-
-# 5. 一个 AI 财税团队
-
-例如，一个企业可以拥有：
-
-```text
-                    AI 财税团队
-                         │
-        ┌────────────────┼────────────────┐
-        │                │                │
-      AI 出纳          AI 会计          AI 税务师
-        │                │                │
-        │           ┌────┴────┐           │
-        │           │         │           │
-        │         总账      报表          │
-        │                              税务申报
-        │
-        └──────────────┬─────────────────┘
-                       │
-                 AI 税务风控官
-                       │
-                 AI 财务分析师
-```
-
-每个 Agent 都有自己的职责、Skills、Tools 和权限。
-
-但他们不是孤立工作的。
-
-他们围绕同一个企业、同一个业务目标进行协作。
-
----
-
-# 6. 一个真实的例子
-
-假设老板说：
-
-> **“把这个月的账处理好，并告诉我有什么风险。”**
-
-这不是一个 Chat Prompt。
-
-而是一个 Task。
-
-XW-Agent 可以将这个目标拆解成多个工作：
-
-```text
-老板提出目标
-      ↓
-创建月结 Task
-      ↓
-AI 出纳
-读取银行流水
-      ↓
-AI 开票员
-整理发票数据
-      ↓
-AI 会计
-生成并检查凭证
-      ↓
-AI 总账
-完成账务处理
-      ↓
-AI 报表
-生成财务报表
-      ↓
-AI 税务师
-计算相关税务
-      ↓
-AI 风控官
-检查异常与风险
-      ↓
-AI 分析师
-生成经营分析
-      ↓
-汇总结果
-      ↓
-老板
-```
-
-整个过程中，Agent 可以：
-
-* 自己调用系统
-* 自己读取数据
-* 自己执行任务
-* 与其他 Agent 协作
-* 记录工作过程
-* 发现异常
-* 在关键节点请求人工确认
-
----
-
-# 7. AI 不应该替人做所有决定
-
-企业场景与普通聊天不同。
-
-AI 可以自动完成：
-
-```text
-读取
-分析
-整理
-计算
-匹配
-生成
-检查
-```
-
-但涉及高风险操作时：
-
-```text
-付款
-对外发送
-删除数据
-提交申报
-修改关键财务数据
-```
-
-应该进入：
-
-> **Human-in-the-loop**
-
-例如：
-
-```text
-⚠️ AI 税务风控官发现异常
-
-本月某项税负率较历史平均水平明显异常。
-
-AI 建议：
-进一步检查相关收入及进项数据。
-
-[ 查看详情 ]
-
-[ 批准继续 ]
-[ 要求重新检查 ]
-```
-
-人负责最终决策。
-
-Agent 负责执行和协助。
-
----
-
-# 8.CrewOS 的核心不是“自动化”，而是“自主完成工作”
-
-传统自动化通常是：
-
-```text
-如果 A
- ↓
-执行 B
- ↓
-如果 C
- ↓
-执行 D
-```
-
-而 Agent 更接近：
-
-```text
-目标
- ↓
-理解当前状态
- ↓
-制定计划
- ↓
-选择工具
- ↓
-执行
- ↓
-观察结果
- ↓
-调整计划
- ↓
-继续执行
- ↓
-完成目标
-```
-
-因此 XW-Agent 的核心 Runtime 将围绕：
-
-```text
-Planner
-Executor
-Memory
-Tool Manager
-Skill Manager
-Permission
-Task Runtime
-Observation
-Audit
-```
-
-构建。
-
----
-
-# 9. Core Concepts
-
-## Agent
-
-一个具有明确职责的数字员工。
-
-定义：
-
-* Role
-* Goal
-* Instructions
-* Skills
-* Tools
-* Memory
-* Permissions
-
----
-
-## Task
-
-Agent 需要完成的一项具体工作。
-
-例如：
-
-```text
-月结
-客户跟进
-合同审核
-发票检查
-经营分析
-```
-
-Task 拥有自己的状态：
-
-```text
-PENDING
    ↓
-PLANNING
-   ↓
-RUNNING
-   ↓
-WAITING_APPROVAL
-   ↓
-RUNNING
-   ↓
-COMPLETED
+下一周期
 ```
+
+这正好可以验证：
+
+> **AI 能不能真正接住一项复杂、长期运行的企业业务。**
 
 ---
 
-## Skill
+# A Different Interface
 
-Agent 的专业能力。
+如果 CrewOS 成立，用户不应该首先看到：
 
-例如：
+> Create Agent
+
+也不应该首先看到：
+
+> Configure Workflow
+
+而应该看到：
 
 ```text
-tax_calculation
-invoice_check
-financial_analysis
-customer_followup
-contract_review
+What business do you want AI to run?
+
+┌──────────────┐
+│    Finance   │
+│              │
+│   Business   │
+└──────────────┘
+
+┌──────────────┐
+│     Sales    │
+│              │
+│   Business   │
+└──────────────┘
+
+┌──────────────┐
+│  Operations  │
+│              │
+│   Business   │
+└──────────────┘
 ```
 
-Skill 不只是 Prompt。
+用户选择 Business。
 
-它可以包含：
+CrewOS 再决定：
 
-* Instructions
-* Tools
-* Workflow
-* Rules
-* Knowledge
-* Output Format
+* 需要哪些 Agents
+* 需要哪些 Skills
+* 需要哪些 Tools
+* 需要哪些 Rules
+* 哪些事情需要 Approval
+* 哪些事件应该触发工作
+* 下一步应该做什么
 
----
-
-## Tool
-
-Agent 可以使用的外部能力。
-
-例如：
-
-* Web
-* HTTP API
-* Email
-* CRM
-* ERP
-* Database
-* File System
-* MCP
+**复杂性留给系统。**
 
 ---
 
-## Memory
+# The Thesis
 
-让 Agent 记住：
-
-* 企业信息
-* 客户信息
-* 历史任务
-* 工作过程
-* 重要业务上下文
-
----
-
-## Permission
-
-决定 Agent：
+我们相信：
 
 ```text
-什么可以自动做
-什么必须确认
-什么绝对不能做
+Software
+    ↓
+Human operates software
+
+AI Assistant
+    ↓
+Human asks AI
+
+AI Agent
+    ↓
+Human delegates a task
+
+AI Business
+    ↓
+Human delegates responsibility
 ```
 
-例如：
+CrewOS 正在探索最后一步。
 
-```yaml
-gmail:
-  read: allowed
-  send: approval
-
-crm:
-  read: allowed
-  update: allowed
-
-payment:
-  create: approval
-  execute: denied
-```
+> **从 Delegating Tasks 到 Delegating Business.**
 
 ---
 
-# 10. Agent OS
+# Current Status
 
-CrewOS 最终希望形成的不是一个单独的 AI 应用。
+**Early-stage / Experimental**
 
-而是一层：
+当前我们只验证一个核心问题：
 
-> **运行企业 AI Workforce 的 Agent Operating System。**
+> **如果把一项真实的企业业务交给 AI，它能不能真正接住？**
 
-```text
-                         XW-Agent OS
+第一实验：
 
-┌─────────────────────────────────────────────────┐
-│                  Applications                   │
-│                                                 │
-│     财税      销售      CRM      合同      运营   │
-├─────────────────────────────────────────────────┤
-│                  Agent Crew                     │
-├─────────────────────────────────────────────────┤
-│                  Agent Runtime                  │
-│                                                 │
-│ Planner │ Executor │ Memory │ Permission       │
-├─────────────────────────────────────────────────┤
-│              Skills / Tools / MCP               │
-├─────────────────────────────────────────────────┤
-│               Business Data                     │
-│                                                 │
-│ ERP │ CRM │ Email │ Finance │ Documents │ API  │
-└─────────────────────────────────────────────────┘
-```
+**Finance & Tax Business**
+
+现有财税 Prototype 将作为这个假设的第一个验证场景。
 
 ---
 
-# 11. 财税只是开始
+# Roadmap
 
-财税是第一个用来验证 CrewOS 的业务场景。
+### Phase 0 — Concept
 
-未来同样的 Agent OS 可以进入：
+* [x] Business Agent OS direction
+* [x] Business Runtime concept
+* [x] Finance Business prototype
+* [ ] Business Specification
+* [ ] Business State Specification
+* [ ] Outcome Specification
 
-### 销售
+### Phase 1 — Runtime
 
-```text
-线索发现
- ↓
-客户分析
- ↓
-CRM 更新
- ↓
-跟进
- ↓
-报价
- ↓
-合同
-```
+* [ ] Business Runtime
+* [ ] Business State
+* [ ] Event Runtime
+* [ ] Task Runtime
+* [ ] Agent Runtime
+* [ ] Scheduler
+* [ ] Human Approval
+* [ ] Audit
 
-### 合同
+### Phase 2 — Finance Business
 
-```text
-合同读取
- ↓
-条款分析
- ↓
-风险识别
- ↓
-财税影响分析
- ↓
-法务审查
- ↓
-人工确认
-```
+* [ ] Finance Business
+* [ ] Finance Crew
+* [ ] Accounting
+* [ ] Tax
+* [ ] Risk
+* [ ] Financial Analysis
 
-### 运营
+### Phase 3 — More Businesses
 
-```text
-数据采集
- ↓
-分析
- ↓
-发现问题
- ↓
-制定方案
- ↓
-执行
- ↓
-复盘
-```
-
-不同业务拥有不同的 Agent Crew。
-
-但底层运行机制保持一致。
+* [ ] Sales
+* [ ] Operations
+* [ ] Customer Success
+* [ ] Contract
+* [ ] HR
 
 ---
 
-# 12. 我们真正想做的事情
+# One More Thing
 
-不是：
+我们不是在证明：
 
-> 再做一个 ChatGPT。
+> AI 可以替代所有人。
 
-也不是：
+我们甚至不是在证明：
 
-> 再做一个 Workflow Builder。
+> AI 可以完成所有任务。
+
+我们只想回答一个更具体的问题：
+
+> **当 AI 已经足够聪明之后，企业有没有可能把“持续运行一项业务”这件事交给 AI？**
+
+如果答案是 No。
+
+CrewOS 就不应该存在。
+
+如果答案是 Yes。
+
+那么我们正在构建的可能不是另一个 AI 应用。
 
 而是：
 
-> **让企业可以像雇佣员工一样，创建、配置、管理和运行 AI 员工。**
-
-未来，一个企业可以拥有：
-
-```text
-我的 AI 企业
-│
-├── 财税团队
-│   ├── 出纳 Agent
-│   ├── 会计 Agent
-│   ├── 税务 Agent
-│   └── 风控 Agent
-│
-├── 销售团队
-│   ├── 销售 Agent
-│   ├── CRM Agent
-│   └── 客户分析 Agent
-│
-├── 运营团队
-│   ├── 数据 Agent
-│   ├── 内容 Agent
-│   └── 增长 Agent
-│
-└── 管理层 Agent
-    ├── 财务分析
-    ├── 经营分析
-    └── 决策支持
-```
-
-老板不再需要告诉每个人：
-
-> “下一步做什么。”
-
-而是告诉 AI：
-
-> **“我要达到什么目标。”**
-
-剩下的工作，由 AI Workforce 自己组织和完成。
+> **AI 时代的 Business Runtime。**
 
 ---
 
-# 13. Roadmap
+# CrewOS
 
-## Phase 0 — Product Definition
+### **The next unit of AI is not the task. It's the business.**
 
-* [x] 产品概念
-* [x] Agent Workforce 模型
-* [x] 财税 Showcase
-* [ ] Agent Specification
-* [ ] Task Specification
-* [ ] Skill Specification
-* [ ] Permission Specification
-
-## Phase 1 — Single Agent Runtime
-
-* [ ] Single Agent
-* [ ] Task Runtime
-* [ ] Tool Calling
-* [ ] Task History
-* [ ] Execution Log
-* [ ] Basic Web UI
-
-## Phase 2 — Agent Capability
-
-* [ ] Memory
-* [ ] Skills
-* [ ] Human-in-the-loop
-* [ ] Permission System
-* [ ] Scheduled Tasks
-
-## Phase 3 — Agent Crew
-
-* [ ] Multi-Agent
-* [ ] Agent Collaboration
-* [ ] Shared Context
-* [ ] Shared Memory
-* [ ] Crew Workflow
-
-## Phase 4 — Enterprise
-
-* [ ] Workspace
-* [ ] Organization
-* [ ] Multi-tenancy
-* [ ] Audit
-* [ ] Enterprise Permission
-* [ ] Usage & Billing
-
-## Phase 5 — Agent Ecosystem
-
-* [ ] Agent Templates
-* [ ] Skill Marketplace
-* [ ] Agent Marketplace
-* [ ] Agent Sharing
-* [ ] Agent Deployment
-
----
-
-# 14. Current Status
-
-> **Early-stage / Experimental**
-
-XW-Agent 目前仍处于产品和架构探索阶段。
-
-当前重点不是快速堆叠功能，而是验证一个核心假设：
-
-> **AI Agent 能否从“回答问题”真正走向“持续完成企业工作”？**
-
-财税场景将作为第一阶段的重要验证场景。
-
----
-
-# 15. Philosophy
-
-> **Don't build another chatbot.**
->
-> **Build an AI workforce.**
-
-让 AI 不只是回答问题。
-
-让 AI：
-
-**理解目标 → 组织工作 → 调用工具 → 协同 Agent → 执行任务 → 发现风险 → 请求确认 → 完成工作。**
-
-最终：
-
-> **让企业拥有一支可以持续工作的 AI 团队。**
-
----
-
-## CrewOS
-
-**AI Employees. AI Crews. One Agent OS.**
