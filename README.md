@@ -24,6 +24,8 @@ CrewOS 是一个关于企业 Agent 产品形态的公开实验。
 
 👉 [Open CrewOS](https://garbo9779.github.io/XW-Agent-Saas/CrewOS-runtime.html)
 
+👉 [打开 CrewOS · 业务工作台](https://garbo9779.github.io/XW-Agent-Saas/CrewOS-business-workbench.html)
+
 我们正在探索一个问题：
 
 > **当 AI 已经能够完成任务之后，下一步是什么？**
