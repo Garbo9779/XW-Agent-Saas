@@ -673,6 +673,92 @@ Audit
 
 > **Business Runtime。**
 
+## 认证、安全与凭证边界
+
+如果 CrewOS 要持续操作企业业务，认证不能只是一个登录页面。
+
+它需要回答：
+
+- 当前发起操作的是谁？
+- 用户属于哪个企业与租户？
+- 用户、Agent、Skill 和 Tool 分别拥有什么权限？
+- 哪些操作可以自动执行，哪些必须人工审批？
+- 第三方系统凭证由谁保管、何时签发、何时失效？
+- 每一次读取、决策与执行能否被完整审计？
+
+### 当前实现状态
+
+> **当前仓库仍是公开的静态概念 Demo，尚未实现用户认证。**
+
+`main` 分支目前只有静态 HTML、CSS、JavaScript、图片与说明文档，由 GitHub Pages 直接提供。当前代码没有：
+
+- 用户与租户服务；
+- 登录、登出或回调接口；
+- API 网关与鉴权中间件；
+- Session、JWT 或 OAuth 流程；
+- `Authorization` 请求头；
+- 认证 Cookie；
+- `localStorage` / `sessionStorage` token；
+- token 签发、刷新、轮换、吊销与过期校验；
+- 业务数据库、租户隔离或服务端审计日志。
+
+因此，当前 Demo 的真实请求流是：
+
+```text
+访客浏览器
+   ↓ GET 静态页面与图片
+GitHub Pages
+   ↓
+HTML / CSS / JavaScript 在本地运行
+   ↓
+页面交互与动画
+```
+
+任何拿到 Demo URL 的人都可以访问页面。页面中出现的 Permissions、Approval、Audit、Guardrails、零信任等词语，表达的是目标产品能力，并不代表这些能力已经在当前仓库落地。
+
+### 目标认证架构
+
+真实业务版本需要把身份、租户、权限、审批与凭证交换放在服务端：
+
+```text
+用户
+  ↓ 登录
+Identity Provider / Auth Service
+  ↓ 签发短期会话
+Browser
+  ↓ 携带 HttpOnly + Secure + SameSite Cookie
+API Gateway / Backend
+  ↓ 校验身份、租户、RBAC / ABAC 与审批策略
+Business Runtime
+  ↓ 按任务换取短期、最小权限凭证
+Agent / Skill / Tool / Enterprise System
+  ↓
+Audit Log
+```
+
+这里至少包含五类安全主体：
+
+| 主体 | 需要证明什么 | 权限边界 |
+| --- | --- | --- |
+| Human User | 用户身份与所属租户 | 角色、业务范围、资源范围 |
+| Business Runtime | 请求来自可信服务 | 只编排被授权的 Business |
+| Agent | 正在代表谁、执行什么任务 | 按任务和时效收窄 |
+| Skill / Tool | 可以调用哪些能力 | 参数、动作与数据范围 |
+| Enterprise System | 外部系统连接是否可信 | 每个租户独立授权 |
+
+### 凭证与 Token 原则
+
+1. API Key、OAuth Client Secret、第三方系统凭证只保存在服务端 Secret Manager 或受保护的环境变量中，禁止进入 HTML、前端 JavaScript、Git 历史和浏览器持久化存储。
+2. 浏览器只持有短生命周期会话，优先使用 `HttpOnly`、`Secure`、`SameSite` Cookie，避免前端 JavaScript 读取长期 token。
+3. Agent 不直接共享用户或管理员的长期凭证。Runtime 应为具体任务换取短期、按租户、按工具、按动作限定的凭证。
+4. 服务端必须在每次请求和工具调用时校验身份、租户与资源权限；前端隐藏按钮不能替代鉴权。
+5. Token 必须支持过期、刷新、轮换与吊销；日志必须对 token、Cookie、API Key 和敏感业务字段脱敏。
+6. 付款、申报、合同签署、数据导出等高风险动作进入人工审批，并记录操作者、Agent、输入、决策依据、工具调用、结果与时间戳。
+
+认证在 CrewOS 中不是外围能力。
+
+> **它是“企业为什么敢把业务交给 AI”的前提。**
+
 ---
 
 # 13. 为什么不是 Workflow？
