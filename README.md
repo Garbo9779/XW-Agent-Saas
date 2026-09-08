@@ -602,6 +602,80 @@ CrewOS 正在探索最后一步。
 
 ---
 
+# Authentication / 认证状态
+
+> **当前结论：本仓库尚未实现用户认证。**  
+> `main` 分支中的 CrewOS 目前是部署在 GitHub Pages 上的静态概念 Demo，不包含后端认证服务、登录接口、会话管理或访问令牌逻辑。
+
+## 当前组件
+
+| 组件 | 当前实现 |
+| --- | --- |
+| 前端 | `CrewOS-runtime.html`、`CrewOS.html` 中的静态 HTML / CSS / JavaScript |
+| 托管 | GitHub Pages 直接提供公开静态文件 |
+| 用户与身份服务 | 未实现 |
+| 登录 / 登出接口 | 未实现 |
+| API 网关与鉴权中间件 | 未实现 |
+| Session / Token 存储 | 未实现 |
+| 数据库与租户隔离 | 未实现 |
+
+README 和原型页面中出现的“权限管控”“最小权限”“审批”“审计”等内容，是产品目标或架构设想，不是当前仓库已经运行的安全功能。
+
+## 当前请求流
+
+```text
+访客浏览器
+   ↓  GET 静态页面与图片
+GitHub Pages
+   ↓
+HTML / CSS / JavaScript 在浏览器中运行
+   ↓
+DOM 交互与动画
+```
+
+当前 JavaScript 只负责页面展示和交互：
+
+- 不发送登录请求；
+- 不调用业务后端 API；
+- 不设置 `Authorization` 请求头；
+- 不读取或写入认证 Cookie；
+- 不在 `localStorage` / `sessionStorage` 中保存 token；
+- 不执行 token 签发、刷新、吊销或过期校验。
+
+因此，拿到 Demo URL 的任何人都可以访问页面；系统也无法识别“当前用户是谁”或判断其业务权限。
+
+## 凭证与 Token 如何处理
+
+当前代码中没有应用凭证、API Key、OAuth Client Secret、JWT 或 Session ID，也没有 `.env` 配置。仓库目前不需要任何运行时密钥。
+
+后续接入真实业务系统时，应遵循以下边界：
+
+1. 密钥和第三方系统凭证只保存在服务端 Secret Manager 或受保护的环境变量中，禁止写入 HTML、前端 JavaScript、Git 历史或浏览器存储。
+2. 浏览器只持有短生命周期会话；优先使用 `HttpOnly`、`Secure`、`SameSite` Cookie，避免让前端 JavaScript 直接读取长期 token。
+3. 服务端负责验证身份、租户、角色和资源级权限；前端隐藏按钮不能替代鉴权。
+4. Agent / Tool 调用使用按租户、按工具、按任务收窄权限的短期凭证，不共享管理员级 token。
+5. 高风险操作进入人工审批，并记录操作者、Agent、输入、工具调用、结果和时间戳，形成审计轨迹。
+6. Token 必须具备过期、刷新、轮换和吊销机制；日志中对 token、Cookie、API Key 和敏感业务字段做脱敏。
+
+建议的真实系统认证链路：
+
+```text
+用户
+  ↓ 登录
+Identity Provider / Auth Service
+  ↓ 签发短期会话
+Browser
+  ↓ 携带安全 Cookie
+API Gateway / Backend
+  ↓ 校验身份、租户、RBAC/ABAC 与审批策略
+Business Runtime
+  ↓ 换取短期、最小权限凭证
+Agent / Tool / Enterprise System
+  ↓
+Audit Log
+```
+
+---
 # Roadmap
 
 ### Phase 0 — Concept
