@@ -1,5 +1,9 @@
 # CrewOS+Saas
-因为种种原因实现不了自己的想法 所以想再这里上传一些我对产品的一些想法给大家参考，希望大家可以提出建议，如果有更好的想法也可以一起来聊一聊
+CrewOS 是一个关于企业 Agent 产品形态的公开实验。
+我正在尝试回答一个问题：
+当 AI 已经能够完成任务以后，它能否进一步接住长期、复杂、持续变化的真实业务？
+这里会持续记录产品原型、设计实验、思考过程以及失败的假设。
+如果你也在研究类似问题，欢迎一起讨论。
 
  <img width="1920" height="958" alt="image" src="https://github.com/user-attachments/assets/41b4397a-dcb9-464e-a35f-3e710731c188" />
 
@@ -8,6 +12,14 @@
 > **The next unit of AI is not the task. It's the business.**
 
 **CrewOS is a Business Runtime for AI-operated businesses.**
+
+当前产品原型：
+→ CrewOS Studio
+这是一个交互概念 Demo，用来探索：
+- Business 如何进入 AI
+- AI Crew 如何协作
+- Runtime 如何表达持续工作
+- 企业业务如何与 Agent 产生新的交互方式
 
 我们正在探索一个问题：
 
