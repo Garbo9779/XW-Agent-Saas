@@ -1,5 +1,8 @@
 # CrewOS+Saas
 因为种种原因实现不了自己的想法 所以想再这里上传一些我对产品的一些想法给大家参考，希望大家可以提出建议，如果有更好的想法也可以一起来聊一聊
+
+ <img width="1920" height="958" alt="image" src="https://github.com/user-attachments/assets/41b4397a-dcb9-464e-a35f-3e710731c188" />
+
  # CrewOS
 
 > **The next unit of AI is not the task. It's the business.**
