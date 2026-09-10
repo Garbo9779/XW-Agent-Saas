@@ -22,6 +22,8 @@ CrewOS 是一个关于企业 Agent 产品形态的公开实验。
 - 企业业务如何与 Agent 产生新的交互方式
 ## Live Demo
 
+👉 [Open CrewOSIdea💡](https://garbo9779.github.io/XW-Agent-Saas/CrewOS.html)
+
 👉 [Open CrewOS](https://garbo9779.github.io/XW-Agent-Saas/CrewOS-runtime.html)
 
 👉 [打开 CrewOS · 业务工作台](https://garbo9779.github.io/XW-Agent-Saas/CrewOS-business-workbench.html)
