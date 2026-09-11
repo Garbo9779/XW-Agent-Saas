@@ -14,7 +14,7 @@ CrewOS 是一个关于企业 Agent 产品形态的公开实验。
 **CrewOS is a Business Runtime for AI-operated businesses.**
 
 当前产品原型：
-→ CrewOS Studio
+→ CrewOS business
 这是一个交互概念 Demo，用来探索：
 - Business 如何进入 AI
 - AI Crew 如何协作
